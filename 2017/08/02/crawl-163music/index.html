@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言近来看到微信知乎上有关于网易云音乐评论的爬虫，作为其的用户，对其歌曲评论也是很感兴趣，而作为一名Python开发者，看别人写的代码总有些不满意的地方，光看不练假把式。借助前人的经验，结合自己的需求与实现方案就有了这篇博客来记录一下项目的过程。 需求分析与技术栈需求本项目只爬取歌手热门50首歌曲，歌曲里面只爬取热门评论。涉及到的数据有：歌手、歌曲、评论、评论用户。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网易云歌曲热门评论爬虫">
+<meta property="og:url" content="http://xiaoq1024.github.io/2017/08/02/crawl-163music/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="前言近来看到微信知乎上有关于网易云音乐评论的爬虫，作为其的用户，对其歌曲评论也是很感兴趣，而作为一名Python开发者，看别人写的代码总有些不满意的地方，光看不练假把式。借助前人的经验，结合自己的需求与实现方案就有了这篇博客来记录一下项目的过程。 需求分析与技术栈需求本项目只爬取歌手热门50首歌曲，歌曲里面只爬取热门评论。涉及到的数据有：歌手、歌曲、评论、评论用户。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-30T12:11:54.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网易云歌曲热门评论爬虫">
+<meta name="twitter:description" content="前言近来看到微信知乎上有关于网易云音乐评论的爬虫，作为其的用户，对其歌曲评论也是很感兴趣，而作为一名Python开发者，看别人写的代码总有些不满意的地方，光看不练假把式。借助前人的经验，结合自己的需求与实现方案就有了这篇博客来记录一下项目的过程。 需求分析与技术栈需求本项目只爬取歌手热门50首歌曲，歌曲里面只爬取热门评论。涉及到的数据有：歌手、歌曲、评论、评论用户。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2017/08/02/crawl-163music/"/>
+
+
+
+
+
+  <title>网易云歌曲热门评论爬虫 | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2017/08/02/crawl-163music/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">网易云歌曲热门评论爬虫</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-02T18:30:54+08:00">
+                2017-08-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/爬虫/" itemprop="url" rel="index">
+                    <span itemprop="name">爬虫</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>近来看到微信知乎上有关于网易云音乐评论的爬虫，作为其的用户，对其歌曲评论也是很感兴趣，而作为一名Python开发者，看别人写的代码总有些不满意的地方，光看不练假把式。借助前人的经验，结合自己的需求与实现方案就有了这篇博客来记录一下项目的过程。</p>
+<h2 id="需求分析与技术栈"><a href="#需求分析与技术栈" class="headerlink" title="需求分析与技术栈"></a>需求分析与技术栈</h2><h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>本项目只爬取歌手热门50首歌曲，歌曲里面只爬取热门评论。涉及到的数据有：歌手、歌曲、评论、评论用户。</p>
+<a id="more"></a>
+<h3 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h3><ul>
+<li>本项目使用同步并发方案</li>
+<li>requests 发送http请求</li>
+<li>concurrent.future.ThreadPoolExecutor 并发http请求</li>
+<li>BeautifulSoup作为解析库</li>
+<li>collections.namedtuple 做数据model</li>
+<li>pymysql连接mysql存储数据</li>
+<li>threading.local、queue.Queue、上下文实现mysql连接池</li>
+</ul>
+<h2 id="前端api分析"><a href="#前端api分析" class="headerlink" title="前端api分析"></a>前端api分析</h2><p>首先从首页<a href="http://music.163.com/" target="_blank" rel="noopener">http://music.163.com/</a>可以看到有<a href="http://music.163.com/#/discover/artist" target="_blank" rel="noopener">歌手</a>菜单，然后在歌手下的<a href="http://music.163.com/#/discover/artist/signed/" target="_blank" rel="noopener">入驻歌手</a>可以翻页获取所有的歌手。接下来是歌曲，点击前面的入驻歌手下的任意一位歌手可以进入到其歌曲页面，里面的第一个tab就是热门50首，第一步获取所有歌手后，第二步可以直接根据第一步获取的歌手id直接进入歌曲页获取所有歌手的热门50首歌曲。类似的，点击歌曲可以进入播放页，里面也包含了评论。</p>
+<ol>
+<li><h3 id="获取歌手"><a href="#获取歌手" class="headerlink" title="获取歌手"></a>获取歌手</h3>在<a href="http://music.163.com/#/discover/artist/signed/" target="_blank" rel="noopener">入驻歌手</a>，不断往下滑动可以触发翻页，在chrome中看到是发起xhr请求，返回的数据是json格式的，这就爽了，连解析都省了，而然请求的数据都是加密的。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST http://music.163.com/weapi/artist/list?csrf_token= HTTP/1.1</span><br><span class="line"></span><br><span class="line">Form Data:</span><br><span class="line">params:ZeY1ayCQdfu...Sm/1zFi7BPNz4tnRcZbp2nPescAiqluJ/AxDEEImUhewZj28cw0FxnV6RrVtRFs2x9fJnMxAqvuo1YRV+La</span><br><span class="line">encSecKey:06180a79d4...76499d68438c31114f139d7b9397b3bbc12034e779b500494dc</span><br></pre></td></tr></table></figure>
+<p>在chrome开发者工具的Network的http发起请求中，chrome提供了Initiator，从这里可以看到发起该请求的堆栈调用，点击翻页歌手的那个http请求的Initiator，可以看到主要是有core.js发起的，但顺着进入发现该js文件是压缩过的，看压缩的js实在不在我的眼力范围内，于是Charles登场了。Charles是一个http抓包调试工具，里面有一项Map Local的功能，可以把请求的响应直接映射为本地文件。将core.js解压美化好放到桌面，配置chrome走Charles的代理，然后将请求core.js的请求映射到本地core.js，此时再看Initiator的发起堆栈就很清晰了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 搜索encSecKey定位到此处</span><br><span class="line">var bIm4q = window.asrsea(JSON.stringify(j5o), baW2x([&quot;流泪&quot;, &quot;强&quot;]), baW2x(JU7N.md), baW2x([&quot;爱心&quot;, &quot;女孩&quot;, &quot;惊恐&quot;, &quot;大笑&quot;]));</span><br><span class="line">e5j.data = k5p.de6Y(&#123;</span><br><span class="line">    params: bIm4q.encText,</span><br><span class="line">    encSecKey: bIm4q.encSecKey</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="前端api分析-1"><a href="#前端api分析-1" class="headerlink" title="前端api分析"></a>前端api分析</h2><p>首先从首页<a href="http://music.163.com/" target="_blank" rel="noopener">http://music.163.com/</a>可以看到有<a href="http://music.163.com/#/discover/artist" target="_blank" rel="noopener">歌手</a>菜单，然后在歌手下的<a href="http://music.163.com/#/discover/artist/signed/" target="_blank" rel="noopener">入驻歌手</a>可以翻页获取所有的歌手。接下来是歌曲，点击前面的入驻歌手下的任意一位歌手可以进入到其歌曲页面，里面的第一个tab就是热门50首，第一步获取所有歌手后，第二步可以直接根据第一步获取的歌手id直接进入歌曲页获取所有歌手的热门50首歌曲。类似的，点击歌曲可以进入播放页，里面也包含了评论。</p>
+<ol>
+<li><h3 id="获取歌手-1"><a href="#获取歌手-1" class="headerlink" title="获取歌手"></a>获取歌手</h3>在<a href="http://music.163.com/#/discover/artist/signed/" target="_blank" rel="noopener">入驻歌手</a>，不断往下滑动可以触发翻页，在chrome中看到是发起xhr请求，返回的数据是json格式的，这就爽了，连解析都省了，而然请求的数据都是加密的。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">POST http://music.163.com/weapi/artist/list?csrf_token= HTTP/1.1</span><br><span class="line"></span><br><span class="line">Form Data:</span><br><span class="line">params:ZeY1ayCQdfu...Sm/1zFi7BPNz4tnRcZbp2nPescAiqluJ/AxDEEImUhewZj28cw0FxnV6RrVtRFs2x9fJnMxAqvuo1YRV+La</span><br><span class="line">encSecKey:06180a79d4...76499d68438c31114f139d7b9397b3bbc12034e779b500494dc</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>在chrome开发者工具的Network的http发起请求中，chrome提供了Initiator，从这里可以看到发起该请求的堆栈调用，点击翻页歌手的那个http请求的Initiator，可以看到主要是有core.js发起的，但顺着进入发现该js文件是压缩过的，看压缩的js实在不在我的眼力范围内，于是Charles登场了。Charles是一个http抓包调试工具，里面有一项Map Local的功能，可以把请求的响应直接映射为本地文件。将core.js解压美化好放到桌面，配置chrome走Charles的代理，然后将请求core.js的请求映射到本地core.js，此时再看Initiator的发起堆栈就很清晰了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// 搜索encSecKey定位到此处</span><br><span class="line">var bIm4q = window.asrsea(JSON.stringify(j5o), baW2x([&quot;流泪&quot;, &quot;强&quot;]), baW2x(JU7N.md), baW2x([&quot;爱心&quot;, &quot;女孩&quot;, &quot;惊恐&quot;, &quot;大笑&quot;]));</span><br><span class="line">e5j.data = k5p.de6Y(&#123;</span><br><span class="line">    params: bIm4q.encText,</span><br><span class="line">    encSecKey: bIm4q.encSecKey</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&gt;&gt;&gt;&gt; fa5c22a9cd73b32e5904ece1ae01f0a7b58e3d00</span><br><span class="line">// 进入asrsea，指向function d</span><br><span class="line">function d(d, e, f, g) &#123;</span><br><span class="line">    console.log(d, e, f, g) //在本地js加入日志，重新刷新页面 可以看到</span><br><span class="line">    // d = &#123;&quot;categoryCode&quot;:&quot;5001&quot;,&quot;offset&quot;:&quot;0&quot;,&quot;total&quot;:&quot;true&quot;,&quot;limit&quot;:&quot;60&quot;,&quot;csrf_token&quot;:&quot;&quot;&#125; 原始请求的数据</span><br><span class="line">    // e = 010001 RSA公钥指数0x010001=65537</span><br><span class="line">    // f = 00e0b509f6259df8642db......d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7 RSA模数</span><br><span class="line">    // g = 0CoJUm6Qyw8W8jud AES固定的(相对后面随机的)加密秘钥</span><br><span class="line">    var h = &#123;&#125;,</span><br><span class="line">    i = a(16); // 随机生成AES加密秘钥</span><br><span class="line">    return h.encText = b(d, g), //第一次加密，对明文使用固定秘钥进行AES加密</span><br><span class="line">    h.encText = b(h.encText, i), // 第二次加密，对第一次的结果使用随机秘钥再一次进行AES加密</span><br><span class="line">    h.encSecKey = c(i, e, f), // 使用RSA对随机秘钥进行加密</span><br><span class="line">    h</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol start="2">
+<li><h3 id="获取歌曲"><a href="#获取歌曲" class="headerlink" title="获取歌曲"></a>获取歌曲</h3><p>在第一步获取歌手后就可以根据歌手id进入歌手所对应的热门50个歌曲的页面了，这个页面的结果是html格式的，需要在html页面中对歌曲进行进一步提取。这里有个坑需要注意的是，在热门50首歌曲页面中，浏览器的url是：<code>http://music.163.com/#/artist?id=10559</code>而在chrome的network面板看到的是<code>http://music.163.com/artist?id=10559</code>，这里应该使用后者。url中的<code>#</code>有特别含义？</p>
+</li>
+<li><h3 id="获取评论"><a href="#获取评论" class="headerlink" title="获取评论"></a>获取评论</h3><p>相应地获取到歌曲后，自然可以根据歌曲id获取到歌曲的评论，点击第二步的热门50首中的任意一首歌曲进入，分析网络请求后可以看到评论接口也是返回json格式的，该接口同时返回了评论用户，请求的数据也是像获取歌手api一样加密的，通过前面的console.log，可以看到除了通信的内容不一样，其他的加密参数都是一样的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST http://music.163.com/weapi/v1/resource/comments/R_SO_4_326904?csrf_token= HTTP/1.1</span><br><span class="line">&#123;&quot;rid&quot;:&quot;R_SO_4_326904&quot;,&quot;offset&quot;:&quot;0&quot;,&quot;total&quot;:&quot;true&quot;,&quot;limit&quot;:&quot;20&quot;,&quot;csrf_token&quot;:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p>.<br>├── 163music.sql<br>├── api.py<br>├── cihper.py<br>├── crawl.py<br>├── dbs.py<br>├── log.py<br>└── settings.py </p>
+<h3 id="cihper-py"><a href="#cihper-py" class="headerlink" title="cihper.py"></a>cihper.py</h3><p>获取歌手跟歌曲评论的api加密算法，包含AES和RSA。</p>
+<h3 id="api-py"><a href="#api-py" class="headerlink" title="api.py"></a>api.py</h3><ul>
+<li><code>get_artlists(offset)</code> 获取歌手</li>
+<li><code>get_top50(artist_id)</code> 获取歌手热门50首歌曲，仅爬取歌手的热门50首歌曲，不是全部。</li>
+<li><code>get_comments(song_id)</code> 获取歌曲评论，仅保存热门评论。</li>
+</ul>
+<h3 id="dbs-py"><a href="#dbs-py" class="headerlink" title="dbs.py"></a>dbs.py</h3><p>数据库相关操作，这里利用<code>collections.namedtuple</code>来实现简单的orm。</p>
+<ul>
+<li><code>Artist</code> <code>Song</code> <code>Comment</code> <code>User</code> <code>Log</code> 项目中5个数据Model，对应数据库中的五张表。</li>
+<li><code>ConnectionPool</code> 数据库连接池，利用上下文和threading.local()是实现多线程的连接管理。</li>
+<li><code>insert</code> <code>query</code>…数据库操作方法。</li>
+</ul>
+<h3 id="crawl-py"><a href="#crawl-py" class="headerlink" title="crawl.py"></a>crawl.py</h3><p>具体的爬虫实现，调用api，解析返回结果，保存到数据库中，爬虫启动入口。</p>
+<ul>
+<li><code>CrawlTask</code>爬虫任务基本，管理线程池，处理爬虫结果，简单反爬处理。</li>
+<li><code>ArtistCrawlTask</code> 歌手爬虫</li>
+<li><code>SongCrawlTask</code> 歌曲爬虫</li>
+<li><code>CommentCrawlTask</code> 评论爬虫</li>
+</ul>
+<h3 id="settings-py"><a href="#settings-py" class="headerlink" title="settings.py"></a>settings.py</h3><p>配置模块，数据库连接参数、数据库连接池大小、爬虫线程池大小、爬取频率限制等配置</p>
+<h3 id="log-py"><a href="#log-py" class="headerlink" title="log.py"></a>log.py</h3><p>日志配置模块，输出到控制台等级为DEBUG，输出到文件等级为INFO。</p>
+<h3 id="163music-sql"><a href="#163music-sql" class="headerlink" title="163music.sql"></a>163music.sql</h3><p>数据库定义文件，相关的表定义都在里面。</p>
+<h2 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h2><p>这里仅做简单统计，深入分析就不进行了。</p>
+<h3 id="记录总数"><a href="#记录总数" class="headerlink" title="记录总数"></a>记录总数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(id) as 歌手总数 from artist;</span><br><span class="line">+--------------+</span><br><span class="line">| 歌手总数     |</span><br><span class="line">+--------------+</span><br><span class="line">|        36514 |</span><br><span class="line">+--------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; select count(id) as 歌曲总数 from song;</span><br><span class="line">+--------------+</span><br><span class="line">| 歌曲总数     |</span><br><span class="line">+--------------+</span><br><span class="line">|       303795 |</span><br><span class="line">+--------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; select count(id) as 评论总数 from comment;</span><br><span class="line">+--------------+</span><br><span class="line">| 评论总数     |</span><br><span class="line">+--------------+</span><br><span class="line">|       295766 |</span><br><span class="line">+--------------+</span><br><span class="line">mysql&gt; select count(id) as 用户总数 from user;</span><br><span class="line">+--------------+</span><br><span class="line">| 用户总数     |</span><br><span class="line">+--------------+</span><br><span class="line">|       187509 |</span><br><span class="line">+--------------+</span><br></pre></td></tr></table></figure>
+<h3 id="热门评论点赞前10"><a href="#热门评论点赞前10" class="headerlink" title="热门评论点赞前10"></a>热门评论点赞前10</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select a.name as 歌手, s.name as 歌曲, u.nickname as 用户, c.liked_count as 评论点赞数, c.content as 评论</span><br><span class="line">    -&gt; from comment as c </span><br><span class="line">    -&gt; inner join song as s on c.song_id=s.id </span><br><span class="line">    -&gt; inner join artist as a on s.artist_id=a.id </span><br><span class="line">    -&gt; inner join user as u on c.user_id=u.id </span><br><span class="line">    -&gt; order by c.liked_count desc</span><br><span class="line">    -&gt; limit 10;</span><br><span class="line"></span><br><span class="line">+--------------+-----------------+-----------------------------+-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| 歌手         | 歌曲            | 用户                        | 评论点赞数      | 评论                                                                                                                                                                                                                                                                                                                                                                                    |</span><br><span class="line">+--------------+-----------------+-----------------------------+-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| 李玉刚       | 刚好遇见你      | 邂逅的迷茫                  |          502207 | 初恋很单纯，跟她好了快一年了，终于带她回家见家长。席间老妈不停的给她夹菜，“闺女，来，吃完了待会让他送你回去”。女友可能是误会我妈的意思了，立马放下碗筷，一脸委屈“叔叔阿姨你们别赶我走，我是真心喜欢他的，我以后少吃点”。听到女友说这句话，心瞬间化了。                                                                                                                                  |</span><br><span class="line">| 赵雷         | 成都            | 不穿裤子的云Ina             |          458591 | 你真的红了 很开心 内场票也可以卖到1000+ 虽然以前50就能听你的livehouse 越来越听不起你的演唱会 不过没关系 我会努力变得跟你一样好 民谣不应该穷 以前你吃过的苦都是值得的 难过的日子都是你陪我一起过的 你说你是个普通人 想要买房结婚 我知道 愿你有酒有肉有姑娘 #赵雷                                                                                                                         |</span><br><span class="line">| 陈一发儿     | 童话镇          | 陈一发儿                    |          427118 | 对了~平时每晚八点半，在斗鱼67373直播间可以看到我。不一定在唱歌，也可能在讲段子[吐舌]                                                                                                                                                                                                                                                                                                    |</span><br><span class="line">| 戴荃         | 悟空            | 944黄小刀                   |          379464 | 今天去看了大圣归来。 我旁边有个小孩儿问他妈妈 “这个不是动画片么？为什么有这么多大人来看？” 他妈妈回答： “因为他们一直在等大圣归来啊，等啊等啊，就长大了.&quot; ------泪目~                                                                                                                                                                                                                   |</span><br><span class="line">| 陈粒         | 小半            | 陈粒                        |          298067 | 我的心借了你的光是明是暗                                                                                                                                                                                                                                                                                                                                                                |</span><br><span class="line">| 陈鸿宇       | 理想三旬        | G和弦滴根音                 |          266575 | 爷爷病重，考研失败，骑士也没夺冠，今年似乎一切都不顺利。明天就要离校，辗转难眠，我的亲人和理想你们慢些走[皱眉]                                                                                                                                                                                                                                                                          |</span><br><span class="line">| 薛之谦       | 初学者          | 薛之谦                      |          261884 | 一首一首来吧... 《初学者》 词曲 薛之谦 感谢你的聆听....                                                                                                                                                                                                                                                                                                                                |</span><br><span class="line">| 薛之谦       | 动物世界        | 一个温婉可人的暴暴          |          260817 | 陈奕迅《低等动物》 窦唯《高级动物》 简弘亦《群居动物》 蔡健雅《双栖动物》 许嵩《违章动物》 李荣浩《野生动物》 薛之谦《动物世界》 动物：？？？？？？                                                                                                                                                                                                                                     |</span><br><span class="line">| Dreamtale    | Intro: The Dawn | 你吃冰糕我吃棍              |          259973 | 9年前，魔兽世界公测时我有女朋友，现在，魔兽世界还在电脑里，陪伴我9年的女朋友却没了                                                                                                                                                                                                                                                                                                      |</span><br><span class="line">| 戴荃         | 悟空            | Victoria-D                  |          248069 | 有个外国人问我为什么喜欢孙悟空。我回答他:超人，钢铁侠，美国队长为你们维护正义七八十年。而孙悟空，为我们斩妖除魔，五百年。你们有很多英雄。我们只有他一个。                                                                                                                                                                                                                               |</span><br><span class="line">+--------------+-----------------+-----------------------------+-----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h3 id="歌曲评论总数前10"><a href="#歌曲评论总数前10" class="headerlink" title="歌曲评论总数前10"></a>歌曲评论总数前10</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select a.name as 歌手, s.comment_count as 歌曲评论数, s.name as 歌曲 </span><br><span class="line">    -&gt; from song as s </span><br><span class="line">    -&gt; inner join artist as a on s.artist_id=a.id </span><br><span class="line">    -&gt; order by s.comment_count desc</span><br><span class="line">    -&gt; limit 10;</span><br><span class="line"></span><br><span class="line">+-----------+-----------------+--------------------------------------------------------------+</span><br><span class="line">| 歌手      | 歌曲评论数      | 歌曲                                                         |</span><br><span class="line">+-----------+-----------------+--------------------------------------------------------------+</span><br><span class="line">| 许嵩      |          888475 | 雅俗共赏                                                     |</span><br><span class="line">| 赵雷      |          299186 | 成都                                                         |</span><br><span class="line">| 薛之谦    |          280820 | 暧昧                                                         |</span><br><span class="line">| 李玉刚    |          254452 | 刚好遇见你                                                   |</span><br><span class="line">| Pianoboy  |          215421 | The truth that you leave                                     |</span><br><span class="line">| 陈鸿宇    |          201036 | 理想三旬                                                     |</span><br><span class="line">| 薛之谦    |          192929 | 演员                                                         |</span><br><span class="line">| 以冬      |          179567 | 我的一个道姑朋友（Cover：Lon&amp;タイナカ彩智）                  |</span><br><span class="line">| 薛之谦    |          179133 | 初学者                                                       |</span><br><span class="line">| 薛之谦    |          173334 | 高尚                                                         |</span><br><span class="line">+-----------+-----------------+--------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>项目只是爬取了部分热门的内容，并没有爬取全站，整个下来就只涉及了三个api还是比较简单的。中途也遇到了不少的坑，首先Windows下确实是只适合开发，如果直接在Windows下跑，会偶尔引发mysql的死锁，而放到Linux下并没有发现这个问题，Windows下的日志并没有实时输出到log文件，中途强制退出时会导致日志丢失，Linux下是实时输出到文件的，可以直接tail -f查看。网易云音乐对爬虫还算是毕竟宽容了，频繁爬取一段时间后会被ban，但是过一段时间又会解封，只要不是那么频繁抓取，基本上不会遇到什么反爬策略。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/29/cmder-bash/" rel="next" title="cmder和bash真乃天作之合">
+                <i class="fa fa-chevron-left"></i> cmder和bash真乃天作之合
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/03/http-proxy-in-lan/" rel="prev" title="搭建内网http代理服务器">
+                搭建内网http代理服务器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需求分析与技术栈"><span class="nav-number">2.</span> <span class="nav-text">需求分析与技术栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#需求"><span class="nav-number">2.1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#技术栈"><span class="nav-number">2.2.</span> <span class="nav-text">技术栈</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前端api分析"><span class="nav-number">3.</span> <span class="nav-text">前端api分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取歌手"><span class="nav-number">3.1.</span> <span class="nav-text">获取歌手</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前端api分析-1"><span class="nav-number">4.</span> <span class="nav-text">前端api分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取歌手-1"><span class="nav-number">4.1.</span> <span class="nav-text">获取歌手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取歌曲"><span class="nav-number">4.2.</span> <span class="nav-text">获取歌曲</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取评论"><span class="nav-number">4.3.</span> <span class="nav-text">获取评论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目结构"><span class="nav-number">5.</span> <span class="nav-text">项目结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cihper-py"><span class="nav-number">5.1.</span> <span class="nav-text">cihper.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#api-py"><span class="nav-number">5.2.</span> <span class="nav-text">api.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dbs-py"><span class="nav-number">5.3.</span> <span class="nav-text">dbs.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crawl-py"><span class="nav-number">5.4.</span> <span class="nav-text">crawl.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#settings-py"><span class="nav-number">5.5.</span> <span class="nav-text">settings.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#log-py"><span class="nav-number">5.6.</span> <span class="nav-text">log.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#163music-sql"><span class="nav-number">5.7.</span> <span class="nav-text">163music.sql</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据分析"><span class="nav-number">6.</span> <span class="nav-text">数据分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#记录总数"><span class="nav-number">6.1.</span> <span class="nav-text">记录总数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#热门评论点赞前10"><span class="nav-number">6.2.</span> <span class="nav-text">热门评论点赞前10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#歌曲评论总数前10"><span class="nav-number">6.3.</span> <span class="nav-text">歌曲评论总数前10</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

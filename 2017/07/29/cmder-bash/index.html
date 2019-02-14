@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="bash,cmder," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在Windows下开发，对比Linux，Windows的命令行工具确实暗淡无色，或许有人要说PowerShell不服了，但熟悉Linux的命令操作后，我希望能保持与Linux一致的操作体验。钱包充足的可以考虑转OS X，但上了Windows的贼船，想中途下船确实不易，而且许多快捷键辅助工具都用习惯了，切换到OS X不一定能找到替代品，曾经也尝试过黑苹果，但是在是太折腾了。直接转Ubuntu？还是算">
+<meta name="keywords" content="bash,cmder">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cmder和bash真乃天作之合">
+<meta property="og:url" content="http://xiaoq1024.github.io/2017/07/29/cmder-bash/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="在Windows下开发，对比Linux，Windows的命令行工具确实暗淡无色，或许有人要说PowerShell不服了，但熟悉Linux的命令操作后，我希望能保持与Linux一致的操作体验。钱包充足的可以考虑转OS X，但上了Windows的贼船，想中途下船确实不易，而且许多快捷键辅助工具都用习惯了，切换到OS X不一定能找到替代品，曾经也尝试过黑苹果，但是在是太折腾了。直接转Ubuntu？还是算">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-30T12:11:54.249Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cmder和bash真乃天作之合">
+<meta name="twitter:description" content="在Windows下开发，对比Linux，Windows的命令行工具确实暗淡无色，或许有人要说PowerShell不服了，但熟悉Linux的命令操作后，我希望能保持与Linux一致的操作体验。钱包充足的可以考虑转OS X，但上了Windows的贼船，想中途下船确实不易，而且许多快捷键辅助工具都用习惯了，切换到OS X不一定能找到替代品，曾经也尝试过黑苹果，但是在是太折腾了。直接转Ubuntu？还是算">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2017/07/29/cmder-bash/"/>
+
+
+
+
+
+  <title>cmder和bash真乃天作之合 | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2017/07/29/cmder-bash/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">cmder和bash真乃天作之合</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-29T18:21:53+08:00">
+                2017-07-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/开发工具/" itemprop="url" rel="index">
+                    <span itemprop="name">开发工具</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在Windows下开发，对比Linux，Windows的命令行工具确实暗淡无色，或许有人要说PowerShell不服了，但熟悉Linux的命令操作后，我希望能保持与Linux一致的操作体验。钱包充足的可以考虑转OS X，但上了Windows的贼船，想中途下船确实不易，而且许多快捷键辅助工具都用习惯了，切换到OS X不一定能找到替代品，曾经也尝试过黑苹果，但是在是太折腾了。直接转Ubuntu？还是算了，一个autohotkey就让我选择放弃了。然而别的不敢说，Windows的软件数量肯定是完胜其他的操作系统的，微软没有做好的事情，在民间大牛不断地开发积累过程中产生了许多的cmd代替方案。其中我有尝试过babun和Git for Windows，最终选择了后者，各有优劣，前者也是灰常不错的。新开博客想记录一下配置过程，又重新去配置了一番，以下就是配置过程的记录，希望能给予苦苦挣扎在Windows的cmd中的开发者一点参考。</p>
+<a id="more"></a>
+<h2 id="cmder"><a href="#cmder" class="headerlink" title="cmder"></a>cmder</h2><blockquote>
+<p>Portable console emulator for Windows</p>
+</blockquote>
+<p>cmder在<a href="https://github.com/cmderdev/cmder" target="_blank" rel="noopener">Github</a> 上，有11K的星，看提交记录也是近几天的，项目很是活跃。进入<a href="http://cmder.net/" target="_blank" rel="noopener">官网</a>看到的第一眼就是cmder的一张效果图，好清新有木有，完虐windows黑乎乎的cmd有木有。从他的slogan也可以看出，cmder其实只是一个命令行工具。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>cmder提供了两个版本下载。</p>
+<ul>
+<li>mini版 不带Git for Windows，后面自己单独安装，个人更偏爱这个版本。</li>
+<li>full版 带有Git for Windows，不需另外再安装Git for Windows。</li>
+</ul>
+<h3 id="定制"><a href="#定制" class="headerlink" title="定制"></a>定制</h3><p>打开cmder，可以看到其默认配置呈现出来的效果并没有官网那么清新，当前每个人的审美标准不一样，但对于挑剔的我来说，进一步配置是很有必有的，个人比较喜欢像官网那样的效果：有最大的视角，杂七杂八没用的全部隐藏。Win+Alt+p呼出配置界面。</p>
+<ul>
+<li><h4 id="main"><a href="#main" class="headerlink" title="main"></a>main</h4><ul>
+<li>Appearance<ul>
+<li>去掉 Show buttons(toobar) in tab tar 工具栏对我没什么用</li>
+<li>去掉 Show search filed in tab bar 去掉搜索框</li>
+</ul>
+</li>
+<li>Tab bar<ul>
+<li>去除Tabs on bottom的勾选 将tab标签由底部移动到顶部</li>
+<li>隐藏Tab bar 勾选 Don’t Show 这个比较极端了 个人喜好</li>
+</ul>
+</li>
+<li>Update <ul>
+<li>去掉更新检查，默认是Startup，去掉勾选就可以了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><h4 id="Startup"><a href="#Startup" class="headerlink" title="Startup"></a>Startup</h4><ul>
+<li>Environment<br>  中文乱码问题，初始情况下<code>ls</code>输出的文件中包含中文的结果会似这样显示成这样”‘$’\343\200\214\3..0\217\234\345\215\225‘@”。添加<code>set LANG=zh_CN.UTF-8</code>到Environment，重启即可显示正常的中文文件名了。前面的乱码就能成功显示”「开始」菜单@”。</li>
+</ul>
+</li>
+<li><h4 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h4><ul>
+<li>Text cursor<ul>
+<li>用惯了Vim，这里将光标由竖线改为矩形，选择Rectangle，去掉Blinking闪烁。</li>
+</ul>
+</li>
+<li>Transparency<ul>
+<li>默认情况下cmder已经给背景加了一定的透明度了，可以这里根据个人喜好再适当调节。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><h4 id="修改cmder的命令提示符"><a href="#修改cmder的命令提示符" class="headerlink" title="修改cmder的命令提示符"></a>修改cmder的命令提示符</h4>默认情况下cmder使用<code>λ</code>最为命令提示符，用惯bash的可能更习惯使用<code>$</code>，在配置界面没有找到修改这个的选项，于是乎用sublime在cmder的项目文件夹中搜索<code>λ</code>，定位到vendor/clink.lua<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cmder_prompt = string.gsub(cmder_prompt, &quot;&#123;cwd&#125;&quot;, cwd)</span><br><span class="line">if env == nil then</span><br><span class="line">    lambda = &quot;λ&quot;  // 修改为$</span><br><span class="line">else</span><br><span class="line">    lambda = &quot;(&quot;..env..&quot;) λ&quot;  // 修改为$</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其实修改也没关系，因为后面主要是使用bash的，并不会用直接用cmder的命令行。</p>
+<h3 id="备份配置文件"><a href="#备份配置文件" class="headerlink" title="备份配置文件"></a>备份配置文件</h3><p>配置好cmder后，应该将配置文件保存起来，在重置系统或迁移到新电脑时直接导入以前配置好的配置文件就可以了。<br>其实在配置面板中，右边的第一行<code>Storge:  D:\cmder_mini\vendor\conemu-maximus5\ConEmu.xml</code>点导出即可，我更喜欢直接找到那个文件copy一份。</p>
+<h2 id="bash"><a href="#bash" class="headerlink" title="bash"></a>bash</h2><h3 id="babun"><a href="#babun" class="headerlink" title="babun"></a><a href="http://babun.github.io/" target="_blank" rel="noopener">babun</a></h3><blockquote>
+<p>a Windows shell you will love!</p>
+</blockquote>
+<p>在说bash之前不得不先提一下babun, babun把各种工具都打包好了，并且配置zsh，还给你安装好了oh-my-zsh，里面的工具软件集比后面介绍的Git for Windows要齐全很多。babun的命令行工具使用的是mintty，mintty这个软件跟cmder的性质差不多，总之babun就是开箱即用，灰常不错，我也使用过一段时间，但里面的目录与Windows有些不一致，比如用户的Home目录，并不是真实映射到Windows的用户Home目录的，而是内部自己维护了一个Home目录，部分软件在里面执行没有响应，比如：mysql、nodejs，<code>netstat -ant | grep 3306</code> 这样的命令也不能使用等等，最终也就没使用这个babun，然而这却是懒人必备，强烈建议试用一下，也许这就合适你，那么就不用再各种配置了。</p>
+<h3 id="Git-for-Windows"><a href="#Git-for-Windows" class="headerlink" title="Git for Windows"></a><a href="https://git-for-windows.github.io/" target="_blank" rel="noopener">Git for Windows</a></h3><blockquote>
+<p>Git for Windows focuses on offering a lightweight, native set of tools that bring the full feature set of the Git SCM to Windows while providing appropriate user interfaces for experienced Git users and novices alike.</p>
+</blockquote>
+<p>其实bash只是Git for Windows工具集中的其中一个软件而已，它提供了一个shell环境，供调用其他的工具。这个工具集附带了许多linux的软件工具，比如sed、grep、vim…。</p>
+<h4 id="下载安装，将安装目录d-git-bin-配置到环境变量，即可在命令中直接呼叫bash"><a href="#下载安装，将安装目录d-git-bin-配置到环境变量，即可在命令中直接呼叫bash" class="headerlink" title="下载安装，将安装目录d:/git/bin`配置到环境变量，即可在命令中直接呼叫bash"></a>下载安装，将安装目录<code></code>d:/git/bin`配置到环境变量，即可在命令中直接呼叫bash</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\xiaoq</span><br><span class="line">$ bash</span><br><span class="line">xiaoq@my-pc MINGW32 ~ </span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+<h4 id="定制bash"><a href="#定制bash" class="headerlink" title="定制bash"></a>定制bash</h4><p>首先切换到用户的家目录下，直接cd不带任何目录参数就可以直接切换到家目录下了，可以使用vim或者记事本等创建<code>.bashrc</code>文件，用于保存自己的bash自定义配置。</p>
+<ul>
+<li><h5 id="提示符"><a href="#提示符" class="headerlink" title="提示符"></a>提示符</h5>默认情况下bash的提示符是两行，第一行包含了用户名和主机，第二行就一个<code>$</code>，可以使用<code>echo $PS1</code>查看当前使用的提示符，默认的这个提示符，自我感觉太啰嗦了，用户名跟主机在个人电脑上用处不大，更没必要分两行。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiaoq@my-pc MINGW32 ~ </span><br><span class="line">$ echo $PS1</span><br><span class="line">\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[35m\]$MSYSTEM\[\e[0m\] \[\e[33m\]\w\[\e[0m\]\n&apos;&quot;$&#123;_ps1_symbol&#125;</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这里模仿babun中zsh的提示符，在<code>.bashrc</code>加入<code>export PS1=&#39;\[\033[33m\]{ \W }\[\033[32m\]</code>__git_ps1<code>\[\033[1;33m\] $ \[\033[0m\]&#39;</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiaoq@my-pc MINGW32 ~ </span><br><span class="line">$ . .bashrc //重新加载自定义配置</span><br><span class="line"></span><br><span class="line">&#123; ~ &#125; $ //简洁美观</span><br></pre></td></tr></table></figure></p>
+<p>关于bash的提示符以及颜色控制，可以参考<a href="https://billie66.github.io/TLCL/book/chap14.html" target="_blank" rel="noopener">TLCL这个章节</a></p>
+<ul>
+<li><h5 id="命令别名"><a href="#命令别名" class="headerlink" title="命令别名"></a>命令别名</h5><p>命令别名alias是bash的特性之一，可以给常用的命令其个别名，非常好用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">alias ..=&apos;cd ..&apos;</span><br><span class="line">alias ...=&apos;cd ../..&apos;</span><br><span class="line">alias ....=&apos;cd ../../..&apos;</span><br><span class="line">alias ls=&apos;ls --color=auto&apos;</span><br><span class="line">alias ll=&apos;ls -lh&apos;</span><br><span class="line">alias la=&apos;ls -lAh&apos;</span><br><span class="line">alias ld=&apos;ls -dh&apos;</span><br><span class="line">alias vi=&apos;vim&apos;</span><br><span class="line">alias grep=&apos;grep --color=auto&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h5 id="命令历史"><a href="#命令历史" class="headerlink" title="命令历史"></a>命令历史</h5><ul>
+<li><p>自动保存历史命令<br>在windows下使用bash，有时候习惯使用Ctrl+w来关闭bash，导致会话的历史命令没能成功追加到命令历史文件中，Google得到的方案是修改<code>PROMRT_COMMAND</code>，同样在<code>.bashrc</code>加入：<code>export PROMPT_COMMAND=&#39;history -a&#39;</code>。这样每敲一条命令，就会自动追加到命令历史文件中。</p>
+</li>
+<li><p>修改历史命令的记录方式<br>对于保存命令的策略，bash提供了几种方案（这里让我想起了安卓Activity的启动方式），具体的方案异同就不展开了，可以通过修改<code>HISTCONTROL</code>来定制。在默认情况下，不像Linux，在Windows下的bash这个变量未创建，导致重复执行的命令都会保存到历史命令中，这并不是我所希望的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123; ~ &#125; $ history | tail -n 3</span><br><span class="line">  519  ls</span><br><span class="line">  520  ls // 重复保存了ls</span><br><span class="line">  521  history | tail -n 3</span><br><span class="line"></span><br><span class="line">&#123; ~ &#125; $ vi .bashrc</span><br><span class="line">export HISTCONTROL=&apos;ignoredups&apos; # 对于连续重复的命令，只保存一条</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><h5 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h5><p>在Windows中安装一个新的开发软件后，如果安装时没有自动添加到环境变量，往往需要我们手工点到环境变量里面添加，现在使用bash后不用那么麻烦了，直接在<code>.bashrc</code>中管理你的环境变量。其实还可以使用ln创建软连接到/usr/bin中，但是这种方式感觉不太稳定，还是比较推荐使用环境变量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//新装nodejs，安装时未选择自动配置到环境变量中去</span><br><span class="line">&#123; ~ &#125; $ node</span><br><span class="line">bash: node: command not found</span><br><span class="line"></span><br><span class="line">&#123; ~ &#125; $ vim .bashrc</span><br><span class="line">export PATH=&quot;$PATH:/d/nodejs/&quot;  # 在PATH中加入nodejs的路径</span><br><span class="line"></span><br><span class="line">&#123; ~ &#125; $ . .bashrc</span><br><span class="line">&#123; ~ &#125; $ node</span><br><span class="line">&gt; &apos;nice!&apos;</span><br><span class="line">&apos;nice!&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="cmder与bash的结合"><a href="#cmder与bash的结合" class="headerlink" title="cmder与bash的结合"></a>cmder与bash的结合</h2><p>默认情况下，Git for Windwos自带有命令行工具<code>D:\git\git-bash.exe</code>，但是比起cmder的界面实在是差太大了而且也不支持多tab，但是他自带的软件工具集厉害呀。相反地，cmder界面操作友好，支持多tab，但自身的工具集是不及Git for Windows的。这岂不是天作之合？赶紧的，在一起！在一起！在一起！</p>
+<ul>
+<li><h3 id="将bash配置到cmder的task中"><a href="#将bash配置到cmder的task中" class="headerlink" title="将bash配置到cmder的task中"></a>将bash配置到cmder的task中</h3><p>win+alt+p调出配置面板， 在Startup Tasks里面默认配置有8个，第7个第8个默认是调用cmder full安装下的bash，这里修改为我自己的安装路径 <code>*D:\git\bin\bash.exe -new_console:d:%USERPROFILE%</code> <code>D:\git\bin\bash.exe -new_console:d:%USERPROFILE%</code>，再将这两个移到第1第2位，shift+alt+1,shift+alt+2即可看到效果。</p>
+</li>
+<li><h3 id="cmder启动时就开启bash"><a href="#cmder启动时就开启bash" class="headerlink" title="cmder启动时就开启bash"></a>cmder启动时就开启bash</h3><p>默认情况下，打开cmder进入的是cmder的命令行工具，这里修改为打开cmder时就进入bash。<br>在配置面板中选中Startup –&gt; Sepcified named task，然后选择前面创建的bash task就可以了。</p>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>前文介绍了三种工具: cmder、Git for Windows、babun，正所谓尺有所短，寸有所长，没有哪一个是完美的，挑选符合自己的工具才是正道，babun集齐了命令行工具、各种软件工具、zsh；cmder则更偏向做好命令行；而Git for Windows则偏向提供软件工具集。总之babun或是cmder搭配Git for Windows都能在Windows享受良好的命令行操作体验，对于习惯Linux命令行和喜欢命令行而不是文件管理的开发者提供了极大的便利。稍稍折腾配置一番，无需再吐槽Windows黑乎乎的cmd了，也无需羡慕苹果用户又有qq又有命令行了，为何而不为？</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/bash/" rel="tag"># bash</a>
+          
+            <a href="/tags/cmder/" rel="tag"># cmder</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/28/markdwon-in-sublime/" rel="next" title="Sublime下配置Markdown写作环境">
+                <i class="fa fa-chevron-left"></i> Sublime下配置Markdown写作环境
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/02/crawl-163music/" rel="prev" title="网易云歌曲热门评论爬虫">
+                网易云歌曲热门评论爬虫 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#cmder"><span class="nav-number">1.</span> <span class="nav-text">cmder</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定制"><span class="nav-number">1.2.</span> <span class="nav-text">定制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main"><span class="nav-number">1.2.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Startup"><span class="nav-number">1.2.2.</span> <span class="nav-text">Startup</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Features"><span class="nav-number">1.2.3.</span> <span class="nav-text">Features</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改cmder的命令提示符"><span class="nav-number">1.2.4.</span> <span class="nav-text">修改cmder的命令提示符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备份配置文件"><span class="nav-number">1.3.</span> <span class="nav-text">备份配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bash"><span class="nav-number">2.</span> <span class="nav-text">bash</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#babun"><span class="nav-number">2.1.</span> <span class="nav-text">babun</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git-for-Windows"><span class="nav-number">2.2.</span> <span class="nav-text">Git for Windows</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#下载安装，将安装目录d-git-bin-配置到环境变量，即可在命令中直接呼叫bash"><span class="nav-number">2.2.1.</span> <span class="nav-text">下载安装，将安装目录d:/git/bin`配置到环境变量，即可在命令中直接呼叫bash</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定制bash"><span class="nav-number">2.2.2.</span> <span class="nav-text">定制bash</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#提示符"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">提示符</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#命令别名"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">命令别名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#命令历史"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">命令历史</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#环境变量"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">环境变量</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cmder与bash的结合"><span class="nav-number">3.</span> <span class="nav-text">cmder与bash的结合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将bash配置到cmder的task中"><span class="nav-number">3.1.</span> <span class="nav-text">将bash配置到cmder的task中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cmder启动时就开启bash"><span class="nav-number">3.2.</span> <span class="nav-text">cmder启动时就开启bash</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

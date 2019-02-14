@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="代理,ssh,vagrant," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言爬虫过程中最不可避免的就是ip被ban了，一开始把网易云音乐热门评论爬虫部署到阿里云后没做太多的限制，导致ip被ban了，这一ban就是好几天。要想继续爬下去，走代理是不可避免的了，最开始想到的方案是是去网上抓免费的代理，无奈网上免费的代理能用的无几，去购买收费的代理吧，又觉得有些浪费了，最后想到不是还有自己正在测试的wifi能用嘛，那让阿里云上的爬虫走本地笔记本代理就好了。想法不错，有两座大">
+<meta name="keywords" content="代理,ssh,vagrant">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建内网http代理服务器">
+<meta property="og:url" content="http://xiaoq1024.github.io/2017/08/03/http-proxy-in-lan/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="前言爬虫过程中最不可避免的就是ip被ban了，一开始把网易云音乐热门评论爬虫部署到阿里云后没做太多的限制，导致ip被ban了，这一ban就是好几天。要想继续爬下去，走代理是不可避免的了，最开始想到的方案是是去网上抓免费的代理，无奈网上免费的代理能用的无几，去购买收费的代理吧，又觉得有些浪费了，最后想到不是还有自己正在测试的wifi能用嘛，那让阿里云上的爬虫走本地笔记本代理就好了。想法不错，有两座大">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-30T12:11:54.647Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="搭建内网http代理服务器">
+<meta name="twitter:description" content="前言爬虫过程中最不可避免的就是ip被ban了，一开始把网易云音乐热门评论爬虫部署到阿里云后没做太多的限制，导致ip被ban了，这一ban就是好几天。要想继续爬下去，走代理是不可避免的了，最开始想到的方案是是去网上抓免费的代理，无奈网上免费的代理能用的无几，去购买收费的代理吧，又觉得有些浪费了，最后想到不是还有自己正在测试的wifi能用嘛，那让阿里云上的爬虫走本地笔记本代理就好了。想法不错，有两座大">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2017/08/03/http-proxy-in-lan/"/>
+
+
+
+
+
+  <title>搭建内网http代理服务器 | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2017/08/03/http-proxy-in-lan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">搭建内网http代理服务器</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:02:13+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/爬虫/" itemprop="url" rel="index">
+                    <span itemprop="name">爬虫</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>爬虫过程中最不可避免的就是ip被ban了，一开始把<a href="https://xiaoqqqqqq.github.io/2017/08/02/crawl-163music/" target="_blank" rel="noopener">网易云音乐热门评论爬虫</a>部署到阿里云后没做太多的限制，导致ip被ban了，这一ban就是好几天。要想继续爬下去，走代理是不可避免的了，最开始想到的方案是是去网上抓免费的代理，无奈网上免费的代理能用的无几，去购买收费的代理吧，又觉得有些浪费了，最后想到不是还有自己正在测试的wifi能用嘛，那让阿里云上的爬虫走本地笔记本代理就好了。想法不错，有两座大山必须越过：1. Windows下怎么搭建http代理服务器？2. 笔记本在内网，阿里云如何连接？</p>
+<a id="more"></a>
+<h2 id="vagrant"><a href="#vagrant" class="headerlink" title="vagrant"></a>vagrant</h2><blockquote>
+<p>Development Environments Made Easy</p>
+</blockquote>
+<p>vagrant其实是一个虚拟机的管理工具，以命令行的方式提供了创建、开启、登录、打包迁移等功能，支持virtualbox和VMware。或许你说直接用virtualbox创建一个虚拟机不就行了，何必再多装一个vagrant呢？以前我也是这么想的，直到我尝试过vagrant后才知道在windows下使用linux环境还可以这么方便。</p>
+<h3 id="下载安装Vagrant和virtualbox"><a href="#下载安装Vagrant和virtualbox" class="headerlink" title="下载安装Vagrant和virtualbox"></a>下载安装Vagrant和virtualbox</h3><ul>
+<li>进入<a href="https://www.vagrantup.com/" target="_blank" rel="noopener">官网</a>直接下载最新版即可，我下载的时候的版本是1.9.6，下载完毕安装过程一路下一步。</li>
+<li>下载<a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">virtualbox</a>的时候需要注意版本，至少我尝试了几个版本是没有成功的，最终我使用的版本是4.3.12。</li>
+</ul>
+<h3 id="创建Ubuntu-box"><a href="#创建Ubuntu-box" class="headerlink" title="创建Ubuntu box"></a>创建Ubuntu box</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123; ~ &#125; $ mkdir ubuntu</span><br><span class="line">&#123; ~ &#125; $ cd ubuntu</span><br><span class="line">&#123; ubuntu &#125; $ vagrant init ubuntu/trusty64  // 使用官网的box初始化，其实就生成了一个配置文件</span><br><span class="line">&#123; ubuntu &#125; $ ls</span><br><span class="line">Vagrantfile  // 这个配置文件里面需要注意目前就这一行config.vm.box = &quot;ubuntu/trusty64&quot;，指定了box的位置，这里是官网box地址。</span><br><span class="line"></span><br><span class="line">// 读取当前配置文件，启动虚拟机，第一次启动时发现box不存在，则会去下载，从日志可以看出下载地址：https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/20170729.0.1/providers/virtualbox.box</span><br><span class="line">// 这里速度巨慢，这里ctrl+c结束，然后复制前面日志输出的box地址，用专门的下载工具去下载，这玩意有425M，这里我使用搬瓦工上的vps wget一下，速度很快，下载完了scp回来本机就可以了。</span><br><span class="line">&#123; ubuntu &#125; $ vagrant up</span><br><span class="line"></span><br><span class="line">// 把下载好的box文件放到当前目录，修改前面的那行配置为:config.vm.box = &quot;./virtualbox.box&quot;，然后再vagrant up</span><br><span class="line">&#123; ubuntu &#125; $ vagrant up  // 启动就可以了，不出意外的话会输入日志让你通过vagrant ssh登录虚拟机 </span><br><span class="line">&#123; ubuntu &#125; $ vagrant ssh  // 登录成功就可以进到ubuntu的命令行了，没有虚拟机图形界面，全部在后台运行，很方便。</span><br></pre></td></tr></table></figure>
+<h2 id="tinyproxy"><a href="#tinyproxy" class="headerlink" title="tinyproxy"></a>tinyproxy</h2><p>Linux下的http代理软件还有squid，尝试对比后还是觉得tinyproxy好用些。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get install tinyproxy</span><br></pre></td></tr></table></figure>
+<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/tinyproxy.conf</span><br><span class="line"></span><br><span class="line">Port 8888 # 默认端口为8888，可根据需要自行修改</span><br><span class="line"></span><br><span class="line">Allow 127.0.0.1  # 默认值允许本机连接代理</span><br><span class="line">Allow xx.xx.xx.xx  # 这里加多一行，允许阿里云的ip</span><br><span class="line"></span><br><span class="line">$ sudo service tinyproxy restart  // 重启服务</span><br></pre></td></tr></table></figure>
+<h3 id="测试本机代理是否已经可用"><a href="#测试本机代理是否已经可用" class="headerlink" title="测试本机代理是否已经可用"></a>测试本机代理是否已经可用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl -x localhost:8888 http://httpbin.org/ip  // 在本机执行curl让其通过本机代理访问httpbin，能正常返回则代表本机代理服务已经通了</span><br><span class="line">&#123;</span><br><span class="line">  &quot;origin&quot;: &quot;183.13.212.xxx&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ssh端口转发"><a href="#ssh端口转发" class="headerlink" title="ssh端口转发"></a>ssh端口转发</h2><p>使用ssh来管理远程登录管理服务器这是许多开发者都知道的，或者它的端口转发还有少部分人是不知道，关于详细的端口转发介绍可以看阮一峰老师的这篇文章<a href="http://www.ruanyifeng.com/blog/2011/12/ssh_port_forwarding.html" target="_blank" rel="noopener">SSH原理与运用（二）</a>。首先我们的目标是让阿里云使用搭建在LAN里的一个http代理服务，外部肯定无法主动连接LAN的，所以必须有LAN内部的机器向外部服务器发起连接，构建一个keep alive的socket长连接，这个就可以利用ssh的远程端口转发功能实现。</p>
+<h3 id="LAN服务器创建远程端口转发"><a href="#LAN服务器创建远程端口转发" class="headerlink" title="LAN服务器创建远程端口转发"></a>LAN服务器创建远程端口转发</h3><p>首先确认你的ubuntu能连接到外网服务器，并且为了后面执行端口转发的时候不需要频繁输入密码，最好能配置使用公钥登录，关于公钥登录，可以看下阮一峰老师的这篇<a href="http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html" target="_blank" rel="noopener">SSH原理与运用（一）</a>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 在本机的ubuntu里执行：</span><br><span class="line">$ ssh -N -f -R 6666:localhost:8888 user@host</span><br><span class="line">// 6666为远程服务器端口，8888为本机端口，user:登录远程服务器的用户名 host：远程主机ip -N：不执行shell命令 -f：后台运行</span><br><span class="line"></span><br><span class="line">$ netstat -ant  //执行后会创建一个ssh连接隧道，远程服务器就可以通过这条隧道来访问本机的http代理服务了</span><br><span class="line">tcp        0      0 10.0.2.15:58706         host:22       ESTABLISHED</span><br></pre></td></tr></table></figure>
+<h3 id="远程服务器上使用"><a href="#远程服务器上使用" class="headerlink" title="远程服务器上使用"></a>远程服务器上使用</h3><p>ssh登录到远程服务器，先查看端口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ netstat -ant</span><br><span class="line">tcp        0      0 127.0.0.1:6666          0.0.0.0:*               LISTEN     // 执行远程端口转发生成的一个监听端口，ssh会去处理端口，当有连接进来时，会把数据通过下面这个连接隧道转发出去</span><br><span class="line">tcp        0      0 172.18.xxx.yyy:22       183.13.212.xxx:48410    ESTABLISHED //172.18.xxx.yyy为阿里云的内网ip 183.13.212.xxx为你的LAN外网出口ip   这个连接是第一次执行远程端口转发建立的 </span><br><span class="line">tcp        0      0 172.18.xxx.yyy:22       183.13.212.xxx:48410    ESTABLISHED // 这一个是ssh登录服务器建立的</span><br></pre></td></tr></table></figure></p>
+<p>在服务器上尝试通过远程端口转发建立的隧道使用LAN的http代理服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xiaoq@ubuntu:~$ curl -x localhost:6666 http://httpbin.org/ip</span><br><span class="line">&#123;</span><br><span class="line">  &quot;origin&quot;: &quot;183.13.212.xxx&quot; // 可以看到返回的ip地址已经是LAN代理服务器的外网出口ip了</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="隧道的keep-alive"><a href="#隧道的keep-alive" class="headerlink" title="隧道的keep alive"></a>隧道的keep alive</h2><p>前面通过远程端口转发建立的ssh隧道是不稳定的，时常会掉线，不起作用，使得http代理服务就不好使了。</p>
+<h3 id="autossh"><a href="#autossh" class="headerlink" title="autossh"></a>autossh</h3><p>Google ssh forward keep alive得到的方案是使用autossh。autossh算是对ssh的一个包装工具，它会自动管理ssh隧道，在需要时自动重启隧道。使用时直接用autossh代替ssh即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ autossh -N -f -R 6666:localhost:8888 user@host</span><br></pre></td></tr></table></figure></p>
+<h3 id="ssh客户端与服务器keep-alive配置"><a href="#ssh客户端与服务器keep-alive配置" class="headerlink" title="ssh客户端与服务器keep  alive配置"></a>ssh客户端与服务器keep  alive配置</h3><p>使用autossh发现还是有隧道不能使用的情况，看来autossh也不是非常智能的，这里需要对ssh连接的参数进一步配置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 客户端</span><br><span class="line">$ vi /etc/ssh/ssh_config</span><br><span class="line">Host *</span><br><span class="line">ServerAliveInterval 60  # ssh客户端会每60秒给服务器发一下信号:嘿，哥们我还在，别断连接哦</span><br><span class="line"></span><br><span class="line">// 服务器</span><br><span class="line">$ vi /etc/ssh/sshd_config</span><br><span class="line">ClientAliveInterval 60  # ssh服务器会每60秒给客户端发一下信号:老铁还在吗？不说话我就重连了。</span><br><span class="line">ClientAliveCountMax 3  # 客户端不响应、超时 重连次数</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过前面的一番折腾，使用一段时间后观察爬虫日志，这个内网服务器稳定性还是不错的，可能在网络速度上会直接把项目跑在内网的机器上慢一些，但对于想把项目跑在服务器，而本地仅用作代理还是很实用的。前面在通过远程转发在服务器上构建的6666端口只能在服务器上使用，若需要对外公开，还需要在做些转发的工作，而且对外暴露端口应该还需要做些安全工作，这里就不展开了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/代理/" rel="tag"># 代理</a>
+          
+            <a href="/tags/ssh/" rel="tag"># ssh</a>
+          
+            <a href="/tags/vagrant/" rel="tag"># vagrant</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/02/crawl-163music/" rel="next" title="网易云歌曲热门评论爬虫">
+                <i class="fa fa-chevron-left"></i> 网易云歌曲热门评论爬虫
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/21/xpath/" rel="prev" title="爬虫解析利器xpath">
+                爬虫解析利器xpath <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vagrant"><span class="nav-number">2.</span> <span class="nav-text">vagrant</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载安装Vagrant和virtualbox"><span class="nav-number">2.1.</span> <span class="nav-text">下载安装Vagrant和virtualbox</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Ubuntu-box"><span class="nav-number">2.2.</span> <span class="nav-text">创建Ubuntu box</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tinyproxy"><span class="nav-number">3.</span> <span class="nav-text">tinyproxy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">3.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改配置文件"><span class="nav-number">3.2.</span> <span class="nav-text">修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试本机代理是否已经可用"><span class="nav-number">3.3.</span> <span class="nav-text">测试本机代理是否已经可用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh端口转发"><span class="nav-number">4.</span> <span class="nav-text">ssh端口转发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LAN服务器创建远程端口转发"><span class="nav-number">4.1.</span> <span class="nav-text">LAN服务器创建远程端口转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#远程服务器上使用"><span class="nav-number">4.2.</span> <span class="nav-text">远程服务器上使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隧道的keep-alive"><span class="nav-number">5.</span> <span class="nav-text">隧道的keep alive</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#autossh"><span class="nav-number">5.1.</span> <span class="nav-text">autossh</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssh客户端与服务器keep-alive配置"><span class="nav-number">5.2.</span> <span class="nav-text">ssh客户端与服务器keep  alive配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

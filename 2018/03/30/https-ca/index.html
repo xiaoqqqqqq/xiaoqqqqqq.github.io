@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="https," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在爬虫工作中，第一件事肯定不是先写代码，而是先抓包分析具体要爬取的目标。现在的爬虫目标一般是网页或者app的json接口，对于前者，chrome的开发者控制台的network中一般就已经足够了，而对于app的json接口，有必要配置手机走Charles的代理，通过Charles去分析通信接口。随着https的普及，越来越多的app开始使用https协议与服务器通信，在配置手机证书的过程中因为不了h">
+<meta name="keywords" content="https">
+<meta property="og:type" content="article">
+<meta property="og:title" content="https证书">
+<meta property="og:url" content="http://xiaoq1024.github.io/2018/03/30/https-ca/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="在爬虫工作中，第一件事肯定不是先写代码，而是先抓包分析具体要爬取的目标。现在的爬虫目标一般是网页或者app的json接口，对于前者，chrome的开发者控制台的network中一般就已经足够了，而对于app的json接口，有必要配置手机走Charles的代理，通过Charles去分析通信接口。随着https的普及，越来越多的app开始使用https协议与服务器通信，在配置手机证书的过程中因为不了h">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://xiaoq1024.github.io/images/charles_zhihu_https_ca.png">
+<meta property="og:updated_time" content="2019-01-30T02:50:12.619Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="https证书">
+<meta name="twitter:description" content="在爬虫工作中，第一件事肯定不是先写代码，而是先抓包分析具体要爬取的目标。现在的爬虫目标一般是网页或者app的json接口，对于前者，chrome的开发者控制台的network中一般就已经足够了，而对于app的json接口，有必要配置手机走Charles的代理，通过Charles去分析通信接口。随着https的普及，越来越多的app开始使用https协议与服务器通信，在配置手机证书的过程中因为不了h">
+<meta name="twitter:image" content="http://xiaoq1024.github.io/images/charles_zhihu_https_ca.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2018/03/30/https-ca/"/>
+
+
+
+
+
+  <title>https证书 | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2018/03/30/https-ca/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">https证书</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-30T20:19:17+08:00">
+                2018-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/爬虫/" itemprop="url" rel="index">
+                    <span itemprop="name">爬虫</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在爬虫工作中，第一件事肯定不是先写代码，而是先抓包分析具体要爬取的目标。现在的爬虫目标一般是网页或者app的json接口，对于前者，chrome的开发者控制台的network中一般就已经足够了，而对于app的json接口，有必要配置手机走Charles的代理，通过Charles去分析通信接口。随着https的普及，越来越多的app开始使用https协议与服务器通信，在配置手机证书的过程中因为不了https以及证书，走了不少弯路，闲下又看了不少https和证书相关的知识，以此做个记录。</p>
+<h2 id="https证书格式"><a href="#https证书格式" class="headerlink" title="https证书格式"></a>https证书格式</h2><h3 id="X509"><a href="#X509" class="headerlink" title="X509"></a>X509</h3><h3 id="keystore"><a href="#keystore" class="headerlink" title="keystore"></a>keystore</h3><h3 id="PKCS-公钥加密标准（Public-Key-Cryptography-Standards-PKCS）"><a href="#PKCS-公钥加密标准（Public-Key-Cryptography-Standards-PKCS）" class="headerlink" title="PKCS 公钥加密标准（Public Key Cryptography Standards, PKCS）"></a>PKCS 公钥加密标准（Public Key Cryptography Standards, PKCS）</h3><p>PKCS#12：个人消息交换标准（Personal Information Exchange Syntax Standard）<br>定义了包含私钥与公钥证书（public key certificate）的文件格式。私钥采密码(password)保护。常见的PFX就履行了PKCS#12。<br><a href="https://zh.wikipedia.org/wiki/PKCS_12" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/PKCS_12</a><br><a href="https://www.openssl.org/docs/manmaster/man1/openssl-pkcs12.html" target="_blank" rel="noopener">https://www.openssl.org/docs/manmaster/man1/openssl-pkcs12.html</a><br>定义了一种存档文件格式，用于存储多个加密对象于一个单独的文件中。<br>通常用来打包一个私钥及有关的X509证书<br>扩展名<br>    .p12<br>    .pfx 微软的格式</p>
+<p>相当于一个压缩包，可以压缩任意格式任意个文件，但一般用于打包私钥和对应的证书，解压需密码</p>
+<a id="more"></a>
+<h2 id="X509是什么鬼"><a href="#X509是什么鬼" class="headerlink" title="X509是什么鬼"></a>X509是什么鬼</h2><p>X509是一种证书标准，其规定了证书中包含有哪些内容，ssl就是使用这种证书标准的。X509仅规定了证书需要包含哪些内容，具体的实现有PEM和DER两种，就像unicode与utf-8、utf-16一样。</p>
+<h2 id="两种实现格式"><a href="#两种实现格式" class="headerlink" title="两种实现格式"></a>两种实现格式</h2><ol>
+<li><p>PEM(Privacy Enhanced Mail)，内容为纯文本</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE----- //开头</span><br><span class="line">IG9mIGEgY2VydGlmaWNhdGUgY2hhaW4sIHRoaXMgbWVhbnMgdGhhdCB5b3UncmUgYnJvd3Npbmcg</span><br><span class="line">GX2Kd7aPN2v1QMC0F7as7VcDKEaVriJrJOAK24yz8h4P5FG35kp4FNVDonqqGV/4HjsdFwU+9D0W</span><br><span class="line">... // 中间是base64编码的内容</span><br><span class="line">tOHic1+N7A11uvOxuJqIwn1QIRMQauZU8P0t8t18xMrNDVwbD48LQzX3z8gqkBD1ojfqXd6CNIEm</span><br><span class="line">d0KYQoWM3ZqcWHGdP7rSGAlr8j2D8Sdw5RaN7mVHqJb3ABgMertkUn6iwYzOl4/SKDI=</span><br><span class="line">-----END CERTIFICATE----- //结尾</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DER 二进制格式，不可直接打开</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 通过查看二进制还是隐约能看到些内容的</span><br><span class="line">&#123; ca &#125; $ xxd charles-proxy-ssl-proxying-certificate.cer</span><br><span class="line">00000000: 3082 0586 3082 046e a003 0201 0202 0601  0...0..n........</span><br><span class="line">...</span><br><span class="line">00000030: 0c50 4368 6172 6c65 7320 5072 6f78 7920  .PCharles Proxy</span><br><span class="line">00000040: 4375 7374 6f6d 2052 6f6f 7420 4365 7274  Custom Root Cert</span><br><span class="line">00000050: 6966 6963 6174 6520 2862 7569 6c74 206f  ificate (built o</span><br><span class="line">00000060: 6e20 4445 534b 544f 502d 5052 5434 4d48  n DESKTOP-PRT4MH</span><br><span class="line">...</span><br><span class="line">000000c0: 0355 0407 0c08 4175 636b 6c61 6e64 3111  .U....Auckland1.</span><br><span class="line">000000d0: 300f 0603 5504 080c 0841 7563 6b6c 616e  0...U....Aucklan</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="证书扩展名"><a href="#证书扩展名" class="headerlink" title="证书扩展名"></a>证书扩展名</h2><p>一般的X509证书文件有可能不会直接以前面提到的那两种格式名称直接作为扩展名，常见的扩展名有：</p>
+<ol>
+<li>crt PEM或DER格式，常见于*NIX系统，大多数是PEM格式。</li>
+<li>cer PEM或DER格式，常见于Windows系统，在Windows下一般可以直接双击打开，大多数是DER</li>
+</ol>
+<p>正好Charles生成的证书者两种格式都包含有：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123; ca &#125; $ pwd</span><br><span class="line">/c/Users/xiaoq/AppData/Roaming/Charles/data/ca</span><br><span class="line">&#123; ca &#125; $ ll</span><br><span class="line">charles-proxy-ssl-proxying-certificate.cer</span><br><span class="line">charles-proxy-ssl-proxying-certificate.pem</span><br><span class="line">keystore</span><br></pre></td></tr></table></figure></p>
+<h2 id="内容字段"><a href="#内容字段" class="headerlink" title="内容字段"></a>内容字段</h2><p>不论是PEM格式或DER格式，都不能直接打开读取相应的字段，需要借助相应的工具来读取。可以使用<code>openssl</code>来读取具体的证书内容。<br>以下以Charles生成的证书为例进行这两种格式的读取。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&#123; ca &#125; $ openssl x509 -inform PEM -in charles-proxy-ssl-proxying-certificate.pem -text -noout  // 默认是PEM格式，可省略 -inform选项</span><br><span class="line">&#123; ca &#125; $ openssl x509 -inform DER -in charles-proxy-ssl-proxying-certificate.cer -text -noout</span><br><span class="line"></span><br><span class="line">// 以下是证书的各个字段的内容</span><br><span class="line">Certificate:</span><br><span class="line">    Data:</span><br><span class="line">        Version: 3 (0x2)  // 证书版本</span><br><span class="line">        Serial Number:  // 证书序列号</span><br><span class="line">            01:5b:fd:20:13:c6</span><br><span class="line">    Signature Algorithm: sha256WithRSAEncryption  // 签名算法</span><br><span class="line">        // 发布者，包含CN OU O L ST C 6个字段，生成证书的时候会询问输入</span><br><span class="line">        Issuer: CN=Charles Proxy Custom Root Certificate (built on DESKTOP-PRT4MHS, 12 \xE4\xBA\x94\xE6\x9C\x88 2017), OU=http://charlesproxy.com/ssl, O=XK72 Ltd, L=Auckland, ST=Auckland, C=NZ</span><br><span class="line">        Validity  // 有效期</span><br><span class="line">            Not Before: Jan  1 00:00:00 2000 GMT</span><br><span class="line">            Not After : Jul  9 14:46:29 2046 GMT</span><br><span class="line"></span><br><span class="line">        // 使用者，这里可以看到与发布者一致，这就是所谓的根证书了</span><br><span class="line">        Subject: CN=Charles Proxy Custom Root Certificate (built on DESKTOP-PRT4MHS, 12 \xE4\xBA\x94\xE6\x9C\x88 2017), OU=http://charlesproxy.com/ssl, O=XK72 Ltd, L=Auckland, ST=Auckland, C=NZ</span><br><span class="line"></span><br><span class="line">        // 使用者的公钥信息</span><br><span class="line">        Subject Public Key Info:</span><br><span class="line">            Public Key Algorithm: rsaEncryption</span><br><span class="line">                Public-Key: (2048 bit)</span><br><span class="line">                Modulus:</span><br><span class="line">                    00:81:79:b9:76:c4:aa:ce:f9:d7:d4:04:cc:6d:ed:</span><br><span class="line">                    ...</span><br><span class="line">                    7d:91</span><br><span class="line">                Exponent: 65537 (0x10001)</span><br><span class="line">        X509v3 extensions:</span><br><span class="line">            X509v3 Basic Constraints: critical</span><br><span class="line">                CA:TRUE</span><br><span class="line">            Netscape Comment:</span><br><span class="line">                ....This Root certificate was generated by Charles Proxy for SSL Proxying. If this certificate is part of a certificate chain, this means that you&apos;re browsing through Charles Proxy with SSL Proxying enabled for this website. Please see http://charlesproxy.com/ssl for more information.</span><br><span class="line">            X509v3 Key Usage: critical</span><br><span class="line">                Certificate Sign</span><br><span class="line">            X509v3 Subject Key Identifier:</span><br><span class="line">                5D:79:DB:F6:62:F8:4D:0D:1E:FE:2B:93:E3:24:B6:E1:80:56:0A:FD</span><br><span class="line"></span><br><span class="line">    // 证书签名</span><br><span class="line">    Signature Algorithm: sha256WithRSAEncryption</span><br><span class="line">         0b:0e:45:4c:59:b7:03:ec:42:06:bd:2d:d3:86:50:9a:8c:49:</span><br><span class="line">         ...</span><br><span class="line">         8f:d2:28:32</span><br></pre></td></tr></table></figure></p>
+<h2 id="X509证书在各个操作系统中的位置"><a href="#X509证书在各个操作系统中的位置" class="headerlink" title="X509证书在各个操作系统中的位置"></a>X509证书在各个操作系统中的位置</h2><h3 id="windows"><a href="#windows" class="headerlink" title="windows"></a>windows</h3><h3 id="Linux-Ubuntu"><a href="#Linux-Ubuntu" class="headerlink" title="Linux(Ubuntu)"></a>Linux(Ubuntu)</h3><p>X509证书Ubuntu中存放于<code>/etc/ssl/certs</code>目录下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xiaoq@ubuntu:/etc/ssl/certs$ pwd</span><br><span class="line">/etc/ssl/certs </span><br><span class="line">xiaoq@ubuntu:/etc/ssl/certs$ ls</span><br><span class="line">00673b5b.0  8160b96c.0                                                          Deutsche_Telekom_Root_CA_2.pem</span><br><span class="line">02265526.0  81b9768f.0                                                          dfc0fe80.0</span><br><span class="line">024dc131.0  82223c44.0</span><br></pre></td></tr></table></figure></p>
+<h2 id="Charles证书原理"><a href="#Charles证书原理" class="headerlink" title="Charles证书原理"></a>Charles证书原理</h2><p>对应正常的https通信：Chrome  –&gt;  HttpServer，Chrome带有一系列的根证书，这些证书默认情况下Chrome都是信任的，所以对于使用其信任列表里的根证书颁发的证书网站都一律信任。<br>而走代理的流程是: Chrome –&gt; Charles –&gt; HttpServer，一开始Chrome是不信任Charles的，所以必须先安装Charles的证书。</p>
+<p>配置Chrome走Charles代理，然后访问知乎，点地址栏的https那里可以看到证书，其内容与上诉基本一致，区别是这个证书是Charles颁发给知乎的。<br><img src="/images/charles_zhihu_https_ca.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">In [11]: ca = &apos;charles-proxy-ssl-proxying-certificate.pem&apos;</span><br><span class="line"></span><br><span class="line">In [12]: requests.get(url, proxies=&#123;&apos;https&apos;: &apos;https://localhost:8089&apos;&#125;, verify=ca)</span><br><span class="line">Out[12]: &lt;Response [200]&gt;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/https/" rel="tag"># https</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/24/bash/" rel="next" title="认识bash，高效管理你的linux">
+                <i class="fa fa-chevron-left"></i> 认识bash，高效管理你的linux
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/29/singleton-in-python/" rel="prev" title="Python 中的单例模式">
+                Python 中的单例模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#https证书格式"><span class="nav-number">1.</span> <span class="nav-text">https证书格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#X509"><span class="nav-number">1.1.</span> <span class="nav-text">X509</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keystore"><span class="nav-number">1.2.</span> <span class="nav-text">keystore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PKCS-公钥加密标准（Public-Key-Cryptography-Standards-PKCS）"><span class="nav-number">1.3.</span> <span class="nav-text">PKCS 公钥加密标准（Public Key Cryptography Standards, PKCS）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#X509是什么鬼"><span class="nav-number">2.</span> <span class="nav-text">X509是什么鬼</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两种实现格式"><span class="nav-number">3.</span> <span class="nav-text">两种实现格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#证书扩展名"><span class="nav-number">4.</span> <span class="nav-text">证书扩展名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内容字段"><span class="nav-number">5.</span> <span class="nav-text">内容字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#X509证书在各个操作系统中的位置"><span class="nav-number">6.</span> <span class="nav-text">X509证书在各个操作系统中的位置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#windows"><span class="nav-number">6.1.</span> <span class="nav-text">windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-Ubuntu"><span class="nav-number">6.2.</span> <span class="nav-text">Linux(Ubuntu)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Charles证书原理"><span class="nav-number">7.</span> <span class="nav-text">Charles证书原理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="bash," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="bash管理linux时，如果问哪个程序是最多使用到的，那肯定是shell程序了，常见的linux shell有：sh、bash、csh、zsh。其中bash是linux默认的shell程序，所以想要高效地管理linux，学习熟悉bash是必不可少的，bash本质上是一个shell程序，是linux中的一个可执行文件，其提供了一个让用户与操作系统kernel交互的环境，接收用户输入，将用户输入的命">
+<meta name="keywords" content="bash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="认识bash，高效管理你的linux">
+<meta property="og:url" content="http://xiaoq1024.github.io/2017/08/24/bash/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="bash管理linux时，如果问哪个程序是最多使用到的，那肯定是shell程序了，常见的linux shell有：sh、bash、csh、zsh。其中bash是linux默认的shell程序，所以想要高效地管理linux，学习熟悉bash是必不可少的，bash本质上是一个shell程序，是linux中的一个可执行文件，其提供了一个让用户与操作系统kernel交互的环境，接收用户输入，将用户输入的命">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://cn.linux.vbird.org/linux_basic/0320bash_files/0320bash_1.jpg">
+<meta property="og:updated_time" content="2018-03-30T12:11:54.247Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="认识bash，高效管理你的linux">
+<meta name="twitter:description" content="bash管理linux时，如果问哪个程序是最多使用到的，那肯定是shell程序了，常见的linux shell有：sh、bash、csh、zsh。其中bash是linux默认的shell程序，所以想要高效地管理linux，学习熟悉bash是必不可少的，bash本质上是一个shell程序，是linux中的一个可执行文件，其提供了一个让用户与操作系统kernel交互的环境，接收用户输入，将用户输入的命">
+<meta name="twitter:image" content="http://cn.linux.vbird.org/linux_basic/0320bash_files/0320bash_1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2017/08/24/bash/"/>
+
+
+
+
+
+  <title>认识bash，高效管理你的linux | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2017/08/24/bash/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">认识bash，高效管理你的linux</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T09:25:49+08:00">
+                2017-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="bash"><a href="#bash" class="headerlink" title="bash"></a>bash</h2><p>管理linux时，如果问哪个程序是最多使用到的，那肯定是shell程序了，常见的linux shell有：sh、bash、csh、zsh。其中bash是linux默认的shell程序，所以想要高效地管理linux，学习熟悉bash是必不可少的，bash本质上是一个shell程序，是linux中的一个可执行文件，其提供了一个让用户与操作系统kernel交互的环境，接收用户输入，将用户输入的命令选项参数等解析传递给kernel执行，将执行结果返回给用户，bash提供了许多的特性使其变得非常易用。而且对于许多其他的应用程序，他们也都提供了与bash类似或相同的特性，比如mysqlclient和ipython跟bash一样提供了历史命令功能和快捷键等等，真是一次学习，到处使用，怎么想都是一件很划算的事。<br><a id="more"></a></p>
+<p><img src="http://cn.linux.vbird.org/linux_basic/0320bash_files/0320bash_1.jpg" alt="图片来自鸟哥"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// 查看当前系统支持的shell</span><br><span class="line">$ cat /etc/shells</span><br><span class="line">/bin/sh</span><br><span class="line">/bin/bash</span><br><span class="line">/sbin/nologin</span><br><span class="line">/bin/dash</span><br><span class="line">/bin/tcsh</span><br><span class="line">/bin/csh</span><br><span class="line"></span><br><span class="line">// 查看当前会话所使用的shell</span><br><span class="line">$ echo $SHELL</span><br><span class="line">/bin/bash</span><br><span class="line"></span><br><span class="line">// bash的本质与ls一样，是linux中的一个可执行文件</span><br><span class="line">$ file /bin/ls</span><br><span class="line">/bin/ls: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.18, stripped</span><br><span class="line">$ file /bin/bash</span><br><span class="line">/bin/bash: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.18, stripped</span><br></pre></td></tr></table></figure>
+<h2 id="bashrc-bash的配置脚本文件"><a href="#bashrc-bash的配置脚本文件" class="headerlink" title="~/.bashrc bash的配置脚本文件"></a><code>~/.bashrc</code> bash的配置脚本文件</h2><p>在登录会话时，bash初始化会加载多个配置文件，其中有放在/etc/目录下公用的配置，一般用户只需要维护自己家目录下的<code>.bashrc</code>文件就可以了。在这里加入自定义的配置，比如历史命令控制变量，命令别名，自定义变量等等。修改配置后使用<code>source .bashrc</code>或<code>. .bashrc</code>重新加载配置文件。</p>
+<h2 id="历史命令"><a href="#历史命令" class="headerlink" title="历史命令"></a>历史命令</h2><h3 id="bash-history文件"><a href="#bash-history文件" class="headerlink" title="~/.bash_history文件"></a><code>~/.bash_history</code>文件</h3><p>在用户的家目录下有<code>~/.bash_history</code>文件，该文件保存了用户以前执行过的历史命令，一般会在用户登录终端会话时读取，退出会话时写入。</p>
+<h3 id="history操作历史命令的命令"><a href="#history操作历史命令的命令" class="headerlink" title="history操作历史命令的命令"></a><code>history</code>操作历史命令的命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">history 列出当前会话所有的历史命令</span><br><span class="line">history N 显示最近N条历史命令</span><br><span class="line">history -c 清除</span><br><span class="line">history -w 写入，覆盖</span><br><span class="line">history -a 追加</span><br></pre></td></tr></table></figure>
+<h3 id="调用历史命令"><a href="#调用历史命令" class="headerlink" title="调用历史命令"></a>调用历史命令</h3><ul>
+<li>!num 调用第num调历史命令</li>
+<li>!! 调用最后一条命令</li>
+<li>!str 调用最后一条以str开头的命令</li>
+</ul>
+<h3 id="搜索历史命令"><a href="#搜索历史命令" class="headerlink" title="搜索历史命令"></a>搜索历史命令</h3><p>在bash中按下<code>ctrl+r</code>会提示<code>(reverse-i-search)&#39;:</code>，从提示也可以看出这个查找是反向的，尝试输入vim，bash就会列出历史命令中最后一条包含vim的命令，不是想要的可以再按<code>ctrl+r</code>再往前继续搜索。搜索功能与<code>!str</code>类似，不过搜索功能更强大更灵活。</p>
+<h3 id="历史命令依赖的环境变量"><a href="#历史命令依赖的环境变量" class="headerlink" title="历史命令依赖的环境变量"></a>历史命令依赖的环境变量</h3><p><code>$HISTFILESIZE</code> 保存到<code>~/.bash_history</code>中命令的数目，默认1000。<br><code>$HISTSIZE</code> 会话在内存中维护的历史命令数目，默认1000。<br><code>$HISTCONTROL</code> 历史命令的保存方式，默认是ignoredups，忽略重复的命令。</p>
+<h2 id="命令别名"><a href="#命令别名" class="headerlink" title="命令别名"></a>命令别名</h2><p>使用<code>alias</code>命令来添加命令命令别名，使用<code>unalias</code>取消别名，需要注意的是直接在bash里执行<code>alias</code>来创建的命令别名仅对当前会话有效，如果希望永久生效，应该写到配置文件<code>~/.bashrc</code>中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bashrc</span><br><span class="line"></span><br><span class="line">alias ..=&apos;cd ..&apos;</span><br><span class="line">alias ...=&apos;cd ../..&apos;</span><br><span class="line">alias ....=&apos;cd ../../..&apos;</span><br><span class="line">alias ls=&apos;ls --color=auto&apos;</span><br><span class="line">alias ll=&apos;ls -l&apos;</span><br><span class="line">alias la=&apos;ls -lAh&apos;</span><br><span class="line">alias ld=&apos;ls -dh&apos;</span><br><span class="line">alias vi=&apos;vim&apos;</span><br><span class="line">alias grep=&apos;grep --color=auto&apos;</span><br><span class="line">alias h=&apos;history&apos;</span><br></pre></td></tr></table></figure></p>
+<p>记得看过在</p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>登录会话时，bash默认的初始目录在用户的家目录下，不同的用户家目录不一样，比如root用户的家目录为<code>/root/</code>，那么bash是如何知道当前用户的家目录路径呢？这就依赖于变量了，不同的用户，所处的bash环境不同，这些不同就是变量的不同值反应出来的，用户甚至可以对变量进行进一步赋值，定制属于自己的bash环境。</p>
+<h3 id="常见变量"><a href="#常见变量" class="headerlink" title="常见变量"></a>常见变量</h3><ul>
+<li><code>$PATH</code> 命令搜索路径</li>
+<li><code>$HOME</code> 用户的家目录，许多程序都会读取到，比如<code>cd</code>该命令不加路径时是切换到当前用户的家目录，应该就是读了这个变量。</li>
+<li><code>$PWD</code> 当前目录。</li>
+<li><code>$OLDPWD</code> 上一次所在目录，命令<code>cd -</code>为切换到上一次目录，应该也是依赖于这个变量。</li>
+<li><code>$PS1</code> 命令行提示符，默认为<code>[\u@\h \W]\$</code>，可定制。</li>
+</ul>
+<h3 id="变量的创建及引用"><a href="#变量的创建及引用" class="headerlink" title="变量的创建及引用"></a>变量的创建及引用</h3><p>其实变量是有bash来解释的，对于<code>ls $HOME</code>，bash会将<code>$HOME</code>当做变量，对其进行展开，所以ls接受到的是<code>/home/username</code>而不是<code>$HOME</code>。变量的创建可以直接在bash提示符下创建<code>$ var=&quot;value&quot;</code>，可以通过<code>$+变量名</code>或者是<code>${变量名}</code>来引用变量，<code>echo $var</code>或<code>echo ${var}</code>。通过<code>unset var</code>来撤销变量，需要注意的是变量名与等号之间不能有空格，当然这样创建的变量只在当前会话有用，想要每次都生效则需要写入到<code>~/.bashrc</code>，这里可以写入自己定制的变量以及覆盖系统或是其他应用程序的变量的默认值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">~ $ vi .bashrc</span><br><span class="line"># history size</span><br><span class="line">HISTSIZE=1000</span><br><span class="line">HISTFILESIZE=2000</span><br><span class="line"></span><br><span class="line"># log file path   project dir</span><br><span class="line">vdir=&apos;/var/www/project&apos;</span><br><span class="line">vlog=&apos;/var/log/project/app.log&apos;</span><br><span class="line"></span><br><span class="line">~ $ . .bashrc // 重新加载配置</span><br></pre></td></tr></table></figure></p>
+<p>这样，切换项目目录就可以使用<code>cd $vdir</code>，查看日志使用<code>grep &#39;xxx&#39; $vlog</code>。</p>
+<h2 id="globbing：文件名通配"><a href="#globbing：文件名通配" class="headerlink" title="globbing：文件名通配"></a>globbing：文件名通配</h2><p>由shell负责解释，与调用的命令无关。shell解析命令参数时，如果发现有通配符存在，则会试着对其进行展开去搜索相应的路径，如路径存在则将结果进行展开传递给命令，否则将通配符作为普通字符直接传递给命令。</p>
+<p>匹配模式：元字符<br><code>*</code> 匹配任意多个字符<br><code>?</code> 匹配任意单个字符<br><code>[0-9]</code> <code>[a-z]</code> <code>[0-9A-Z]</code><br><code>[[:upper:]]</code> 大写字母<br><code>[[:lower:]]</code> 小写字母<br><code>[[:alpha:]]</code> 字母<br><code>[[:digit:]]</code> 数字<br><code>[[:alnum:]]</code> <code>[[:alpha:][:digit:]]</code> 字母数字<br><code>[[:space:]]</code> 空白字符<br><code>[^]</code> 取反 <code>[^[:upper:]]</code> 匹配非大写字符</p>
+<h2 id="花括号展开"><a href="#花括号展开" class="headerlink" title="花括号展开"></a>花括号展开</h2><p>通过花括号，可以同时创建多个字符串，这对于批量创建有规律的文件或目录非常有用。花括号内可以放有逗号分隔的字符列表，也可以放一个字符区间，与 blobbing 不同的是花括号是按照你给定的花括号字符范围的全部展开，而blobbing则是根据你给的匹配表达式去匹配路径后再将得到的匹配结果进行展开。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ echo alpha_&#123;A..D&#125;</span><br><span class="line">alpha_A alpha_B alpha_C alpha_D</span><br><span class="line"></span><br><span class="line">$ echo alpha_&#123;A,B,C,D&#125;</span><br><span class="line">alpha_A alpha_B alpha_C alpha_D</span><br><span class="line"></span><br><span class="line">$ echo alpha_&#123;A_&#123;1..3&#125;,B_&#123;2..4&#125;&#125;</span><br><span class="line">alpha_A_num_1 alpha_A_num_2 alpha_A_num_3 alpha_B_num_2 alpha_B_num_3 alpha_B_num_4</span><br></pre></td></tr></table></figure></p>
+<h2 id="重定向-amp-管道"><a href="#重定向-amp-管道" class="headerlink" title="重定向 &amp; 管道"></a>重定向 &amp; 管道</h2><p>文件描述符:</p>
+<ul>
+<li>0标准输入(stdin)</li>
+<li>1标准输出(stdout)</li>
+<li>2标准错误输出(stderr)</li>
+</ul>
+<p><code>&gt; hehe.txt</code> 清空文件<br><code>ping qq.com &gt; /dev/null</code> 扔掉输出</p>
+<p>linux的哲学理念其中一条是: <strong>由目的单一的小程序组成，通过使用者的组合形成一个能够完成复杂任务的应用程序</strong>  。众多的文本处理工具以及管道就是这个理念的体现，数据由一个命令加工处理后通过管道流经下一个命令，这使得每个命令都能专注于做一件事，使用者可以根据需求灵活组合工具来使用。想到平时写程序的时候也应该如此，一个函数不应该具体太多的功能，应该专注于某一功能的实现，做到见名知意。</p>
+<p>对比django的过滤器：<code>{ % if resources|first|length &gt; 10  % }</code>和bash的管道：<code>grep &#39;Trace&#39; $vlog | wc -l</code>确实有异曲同工之妙。<br>linux下有许多文本处理工具：cut、sort、uniq、wc、tr，还有著名的文本三剑客：grep、sed、awk，这些工具搭配管道符组合起来真是好用到爆。</p>
+<h2 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h2><ul>
+<li>ctrl+a 跳到行首</li>
+<li>ctrl+e 跳到行尾</li>
+<li>ctrl+u 从光标删除至行首</li>
+<li>ctrl+h 删除光标左边前一个字符</li>
+<li>ctrl+w 删除光标前一个单词</li>
+<li>ctrl+l 清屏</li>
+<li>ctrl+s 暂停终端传输</li>
+<li>ctrl+q 恢复终端传输 手贱在vim里面按ctrl+s保存就能用上了</li>
+</ul>
+<h2 id="命令帮助"><a href="#命令帮助" class="headerlink" title="命令帮助"></a>命令帮助</h2><p>man<br><a href="https://tldr.ostera.io" target="_blank" rel="noopener">tldr</a><br><a href="https://explainshell.com/" target="_blank" rel="noopener">explainshell</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/bash/" rel="tag"># bash</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/21/xpath/" rel="next" title="爬虫解析利器xpath">
+                <i class="fa fa-chevron-left"></i> 爬虫解析利器xpath
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/30/https-ca/" rel="prev" title="https证书">
+                https证书 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#bash"><span class="nav-number">1.</span> <span class="nav-text">bash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bashrc-bash的配置脚本文件"><span class="nav-number">2.</span> <span class="nav-text">~/.bashrc bash的配置脚本文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#历史命令"><span class="nav-number">3.</span> <span class="nav-text">历史命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bash-history文件"><span class="nav-number">3.1.</span> <span class="nav-text">~/.bash_history文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history操作历史命令的命令"><span class="nav-number">3.2.</span> <span class="nav-text">history操作历史命令的命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用历史命令"><span class="nav-number">3.3.</span> <span class="nav-text">调用历史命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搜索历史命令"><span class="nav-number">3.4.</span> <span class="nav-text">搜索历史命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#历史命令依赖的环境变量"><span class="nav-number">3.5.</span> <span class="nav-text">历史命令依赖的环境变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令别名"><span class="nav-number">4.</span> <span class="nav-text">命令别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量"><span class="nav-number">5.</span> <span class="nav-text">变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常见变量"><span class="nav-number">5.1.</span> <span class="nav-text">常见变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量的创建及引用"><span class="nav-number">5.2.</span> <span class="nav-text">变量的创建及引用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#globbing：文件名通配"><span class="nav-number">6.</span> <span class="nav-text">globbing：文件名通配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#花括号展开"><span class="nav-number">7.</span> <span class="nav-text">花括号展开</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重定向-amp-管道"><span class="nav-number">8.</span> <span class="nav-text">重定向 &amp; 管道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快捷键"><span class="nav-number">9.</span> <span class="nav-text">快捷键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令帮助"><span class="nav-number">10.</span> <span class="nav-text">命令帮助</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

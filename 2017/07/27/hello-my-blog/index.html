@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="hexo,next," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="好记性不如烂笔头，从小学老师就教育我们学习要做笔记，要时常复习。对于走在技术的道路上的开发者，博客就是我们的笔记本，键盘就是我们的笔，把自己所学的知识用键盘细化成文字，记录于博客之中，时常复习才能进一步掌握。几经折腾，挑来选去，绕进了选择工具坑里跳出后，最终选择了Hexo+Next+Github Pages这个方案。以下为配置安装过的所记录的笔记。">
+<meta name="keywords" content="hexo,next">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hello my blog">
+<meta property="og:url" content="http://xiaoq1024.github.io/2017/07/27/hello-my-blog/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="好记性不如烂笔头，从小学老师就教育我们学习要做笔记，要时常复习。对于走在技术的道路上的开发者，博客就是我们的笔记本，键盘就是我们的笔，把自己所学的知识用键盘细化成文字，记录于博客之中，时常复习才能进一步掌握。几经折腾，挑来选去，绕进了选择工具坑里跳出后，最终选择了Hexo+Next+Github Pages这个方案。以下为配置安装过的所记录的笔记。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-30T03:30:47.375Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hello my blog">
+<meta name="twitter:description" content="好记性不如烂笔头，从小学老师就教育我们学习要做笔记，要时常复习。对于走在技术的道路上的开发者，博客就是我们的笔记本，键盘就是我们的笔，把自己所学的知识用键盘细化成文字，记录于博客之中，时常复习才能进一步掌握。几经折腾，挑来选去，绕进了选择工具坑里跳出后，最终选择了Hexo+Next+Github Pages这个方案。以下为配置安装过的所记录的笔记。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2017/07/27/hello-my-blog/"/>
+
+
+
+
+
+  <title>Hello my blog | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2017/07/27/hello-my-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hello my blog</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-27T19:50:12+08:00">
+                2017-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/开发工具/" itemprop="url" rel="index">
+                    <span itemprop="name">开发工具</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>好记性不如烂笔头，从小学老师就教育我们学习要做笔记，要时常复习。对于走在技术的道路上的开发者，博客就是我们的笔记本，键盘就是我们的笔，把自己所学的知识用键盘细化成文字，记录于博客之中，时常复习才能进一步掌握。几经折腾，挑来选去，绕进了选择工具坑里跳出后，最终选择了Hexo+Next+Github Pages这个方案。以下为配置安装过的所记录的笔记。</p>
+<a id="more"></a>
+<h2 id="环境的安装配置"><a href="#环境的安装配置" class="headerlink" title="环境的安装配置"></a>环境的安装配置</h2><h3 id="nodejs的环境配置"><a href="#nodejs的环境配置" class="headerlink" title="nodejs的环境配置"></a>nodejs的环境配置</h3><ol>
+<li>安装nodejs 我这里是选择直接<a href="https://nodejs.org/zh-cn/" target="_blank" rel="noopener">下载</a>二进制包安装，安装过程除了更改安装路径其他的一路下一步，中途也没有遇到什么问题。</li>
+<li>配置npm源，npm为nodejs的包管理器，安装nodejs后就自带有了，就像Python的pip，其默认安装源是在国外，下载速度不是一般的慢，在用户的家目录下<code>C:\Users\username</code>，创建.npmrc，加入淘宝源地址。 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 可以看到npm与nodejs位于同一安装路径下</span><br><span class="line">$ where npm</span><br><span class="line">D:\nodejs\npm</span><br><span class="line"></span><br><span class="line">// 这里使用vim创建，也可以使用其他的文本编辑器创建</span><br><span class="line">$ vi ~/.npmrc</span><br><span class="line">    registry=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h3><p>git也是直接<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">下载</a>二进制安装包，其安装包有三十多M，因为git还附带了许多工具，比如vim、grep、bash，利用这些工具再配合cmder后Windows下命令行不再值得吐槽了，后面有必要再开一篇记录下。</p>
+<h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli // -g 为全局安装</span><br><span class="line"></span><br><span class="line">// 可以看到nmp安装的第三方包并没有安装到nodejs目录中，这路径确实不好找，应该可以修改，这个路径好像就直接在环境变量里了，直接敲hexo就可以用了。</span><br><span class="line">$ where hexo</span><br><span class="line">C:\Users\username\AppData\Roaming\npm\hexo</span><br></pre></td></tr></table></figure>
+</code></pre><h2 id="创建配置博客项目"><a href="#创建配置博客项目" class="headerlink" title="创建配置博客项目"></a>创建配置博客项目</h2><h3 id="创建博客"><a href="#创建博客" class="headerlink" title="创建博客"></a>创建博客</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init blog</span><br><span class="line">$ cd blog</span><br><span class="line">$ npm install //这一步是根据package.json安装依赖包，貌似第一步创建的已经安装好了</span><br><span class="line"></span><br><span class="line">// 项目目录结构</span><br><span class="line">├── _config.yml  // 项目配置文件，需要与主题配置文件区分开</span><br><span class="line">├── package.json  // 依赖包</span><br><span class="line">├── public  // hexo g 生成的静态文件存放目录，部署的时候也是只会发布这个文件夹</span><br><span class="line">├── scaffolds  // 模板文件夹</span><br><span class="line">|   ├── draft.md  // 草稿模板</span><br><span class="line">|   |── page.md  // page布局 标签页 分类页 用</span><br><span class="line">|   └── post.md  // 默认的模板</span><br><span class="line">├── source  // 资源文件夹，除了_posts文件夹外，_开头的文件和文件夹以及隐藏的文件将会被忽略，markdown和html会被解析翻到public文件夹中，其他文件会被拷贝过去</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes  // 主题文件，根据主题来生成静态页面</span><br><span class="line">    |--landscape // hexo自带的默认主题，后面更改的next主题会放到同级目录下</span><br></pre></td></tr></table></figure>
+<h3 id="博客项目的配置文件"><a href="#博客项目的配置文件" class="headerlink" title="博客项目的配置文件"></a>博客项目的配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 这里仅贴出需要修改的部分，其他的使用默认值</span><br><span class="line"># Site </span><br><span class="line">title: xiaoq.py  # 网站标题</span><br><span class="line">subtitle: xiaoq的个人博客  # 网站子标题</span><br><span class="line">description: 人生苦短，我用Python！  # 网站描述信息</span><br><span class="line">author: xiaoq  # 作者</span><br><span class="line">language: zh-Hans  # 语言中文</span><br><span class="line"></span><br><span class="line"># 网站地址</span><br><span class="line">url: http://xiaoq1024.github.io</span><br><span class="line"></span><br><span class="line"># 主题，后面会修改为next</span><br><span class="line">theme: landscape</span><br><span class="line"></span><br><span class="line"># 部署配置，可以在后面部署的时候再配置</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@github.com:xiaoq1024/xiaoq1024.github.io.git</span><br></pre></td></tr></table></figure>
+<h2 id="hexo-常用命令-以及部署运行"><a href="#hexo-常用命令-以及部署运行" class="headerlink" title="hexo 常用命令 以及部署运行"></a>hexo 常用命令 以及部署运行</h2><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><ul>
+<li><code>init</code> 新建项目</li>
+<li><code>new</code> 新建文章、标签页、分类页</li>
+<li><code>generate</code> 可简写为<code>hexo g</code>，根据source和theme生成静态文件到public中去。</li>
+<li><code>publish</code> 发布草稿，创作时可以在新建文章的时候指定为草稿类型，完成后在发布。</li>
+<li><code>server</code> 可简写为<code>hexo s</code>，启动本地服务器，可指定端口-p，和网卡-i，记录日志-l。</li>
+<li><code>deploy</code> 可简写为<code>hexo d</code>，根据项目配置文件中的deploy部分部署到远程服务器中去。</li>
+<li><a href="https://hexo.io/zh-cn/docs/commands.html" target="_blank" rel="noopener">官方文档</a></li>
+</ul>
+<h3 id="本地运行"><a href="#本地运行" class="headerlink" title="本地运行"></a>本地运行</h3><p>初始情况下项目已经有一个hello-world文章了:<code>source/_post/hello-world.md</code>，可以不用先生成自己的文章，先拿这个hello-world生成部署看看效果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g  // 会根据`source/_post/hello-world.md`和主题生成对应文章到public文件夹中去</span><br><span class="line">$ hexo s  // 运行本地服务器，浏览器访问`http://localhost:4000/`即可看到博客效果</span><br><span class="line">INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop</span><br></pre></td></tr></table></figure>
+<h2 id="hexo主题"><a href="#hexo主题" class="headerlink" title="hexo主题"></a>hexo主题</h2><h3 id="主题目录结构"><a href="#主题目录结构" class="headerlink" title="主题目录结构"></a>主题目录结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">├── _config.yml  // 主题的配置文件</span><br><span class="line">├── languages  // 语言包</span><br><span class="line">├── layout  // 布局文件夹，用于存放主题的模板文件，hexo使用Swin模板引擎解析.swin模板文件，其他的需另外安装模板引擎。</span><br><span class="line">├── scripts  // 脚本文件夹，在启动时，Hexo 会载入此文件夹内的 JavaScript 文件。</span><br><span class="line">└── source  // 资源文件夹，除了模板以外的 Asset，例如 CSS、JavaScript 文件。</span><br></pre></td></tr></table></figure>
+<h3 id="切换为主题为next"><a href="#切换为主题为next" class="headerlink" title="切换为主题为next"></a>切换为主题为next</h3><ol>
+<li>从GitHub clone到项目主题目录下<br><code>$ git clone https://github.com/iissnan/hexo-theme-next themes/next</code></li>
+<li>修改项目配置文件中的主题配置<code>theme: next</code></li>
+<li>重新生成运行，即可看到新的主题</li>
+<li>定制next <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 修改主题配置文件 themes/next/_config.yml</span><br><span class="line">favicon: /favicon.ico  // 网站ico，对应文件为source/favicon.ico</span><br><span class="line">scheme: Pisces  // 使用左右双栏</span><br><span class="line">avatar: /uploads/ali.png  // 头像文件，对应文件为source/uploads/ali.png</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="标签页-amp-分类页-amp-阅读全文"><a href="#标签页-amp-分类页-amp-阅读全文" class="headerlink" title="标签页 &amp; 分类页 &amp; 阅读全文"></a>标签页 &amp; 分类页 &amp; 阅读全文</h2><h3 id="Front-matter"><a href="#Front-matter" class="headerlink" title="Front-matter"></a>Front-matter</h3><blockquote>
+<p>Front-matter 是文件最上方以 — 分隔的区域，用于指定个别文件的变量<br>title: Hello World<br>date: 2013/7/13 20:46:25<br>这里声明页面类型type:”tags”|”categories”; 打标签tags; 做分类categories</p>
+<hr>
+</blockquote>
+<h3 id="hexo-new-的三种布局"><a href="#hexo-new-的三种布局" class="headerlink" title="hexo new 的三种布局"></a>hexo new 的三种布局</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">hexo new [layout] &lt;title&gt;</span><br><span class="line">    layout:</span><br><span class="line">        布局 路径</span><br><span class="line">        post /source/_post  // 默认的写作模板文件</span><br><span class="line">        page /source  // 分类 标签 功能性页面</span><br><span class="line">        draft source/_draft  // 草稿，好像没怎么用</span><br></pre></td></tr></table></figure>
+<h3 id="创建标签页"><a href="#创建标签页" class="headerlink" title="创建标签页"></a>创建标签页</h3><ol>
+<li><p>新建标签页</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 会生成source/tags/index.md文件</span><br><span class="line">hexo new page tags</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置页面类型为标签页</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 编辑source/tags/index.md</span><br><span class="line">title: 标签</span><br><span class="line">date: 2017-07-24 17:59:51</span><br><span class="line">type: &quot;tags&quot;  // 在Front-matter中加入这一行</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改主题配置文件 添加tags 这个默认就有了</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: /</span><br><span class="line">  archives: /archives</span><br><span class="line">  tags: /tags</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在创建的文章markdown文件的Front-matter中添加tags</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">title: Hello World</span><br><span class="line">tags:</span><br><span class="line">  - Tag1</span><br><span class="line">  - Tag2</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="创建分类页"><a href="#创建分类页" class="headerlink" title="创建分类页"></a>创建分类页</h3><ol>
+<li><p>新建分类页</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 会生成source/categories/index.md文件</span><br><span class="line">hexo new page categories</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置页面类型为分类页</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 编辑source/categories/index.md</span><br><span class="line">title: 分类</span><br><span class="line">date: 2017-07-24 18:40:02</span><br><span class="line">type: &quot;categories&quot;  // 在Front-matter中加入这一行</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改主题配置文件，添加categories这个也可以不加，因为头像下面已经有分类链接的入口了</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  home: /</span><br><span class="line">  archives: /archives</span><br><span class="line">  categories: /categories</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在创建的文章markdown文件的Front-matter中添加categories</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">title: Hello World</span><br><span class="line">categories: Python</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="阅读全文"><a href="#阅读全文" class="headerlink" title="阅读全文"></a>阅读全文</h3><p>默认情况下，首页会把文章所有的内容都展示出来，这里不是我所希望的，截断的方式有：</p>
+<ol>
+<li>在文章中使用 <!-- more --> 手动进行截断，Hexo 提供的方式，推荐使用这种手动截断的方式</li>
+<li>在文章的 front-matter 中添加 description，并提供文章摘录</li>
+<li>自动形成摘要，在 主题配置文件 中添加： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto_excerpt:</span><br><span class="line">enable: true</span><br><span class="line">length: 150</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="发布到GitHub-Pages"><a href="#发布到GitHub-Pages" class="headerlink" title="发布到GitHub Pages"></a>发布到GitHub Pages</h2><ol>
+<li>创建GitHub Pages仓库，username.github.io</li>
+<li>添加部署的公钥到仓库中，开启写权限</li>
+<li><p>修改项目配置文件，添加</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@github.com:xiaoq1024/xiaoq1024.github.io.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装hexo-git-deploy，<code>npm install hexo-deployer-git --save</code></p>
+</li>
+<li>运行部署<code>hexo d</code></li>
+<li>访问<a href="http://xiaoq1024.github.io">http://xiaoq1024.github.io</a>完美呈现</li>
+</ol>
+<h2 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h2><p>跟着<a href="https://hexo.io/zh-cn/" target="_blank" rel="noopener">hexo文档</a>和<a href="http://theme-next.iissnan.com/" target="_blank" rel="noopener">next文档</a> 一路配置安装下来还是比较顺利的，过程遇到的两个主要的问题有：</p>
+<ul>
+<li><p>标签与分类数量显示不正确<br>  使用hexo clean后重新生成运行仍然不正确，部署到GitHub Pages确是正常的，这个可以直接忽略。</p>
+</li>
+<li><p>发布到GitHub不成功<br>  首先尝试是否能直接clone，若<code>clone git@github.com:xiaoq1024/xiaoq1024.github.io.git</code>，若不能clone成功，检查网络是否畅通，部署公钥是否已经配置；若能clone成功，则尝试添加文件是否能推送是否具有写权限。</p>
+</li>
+<li><p>代码里放django模板标签的时候报<code>Template render error</code>，查阅 <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">https://hexo.io/docs/troubleshooting.html</a> 得知，markdown文件里有不能识别的字符，排查后发现是django里面的过滤器和模板标签与bash的管道符号，不能被识别，特殊字符必须做转义处理，<a href="http://zhang-jc.github.io/2017/03/30/Hexo-Markdown-%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6%E8%BD%AC%E4%B9%89/" target="_blank" rel="noopener">特殊字符及其转义表</a>。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hexo/" rel="tag"># hexo</a>
+          
+            <a href="/tags/next/" rel="tag"># next</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/28/markdwon-in-sublime/" rel="prev" title="Sublime下配置Markdown写作环境">
+                Sublime下配置Markdown写作环境 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境的安装配置"><span class="nav-number">1.</span> <span class="nav-text">环境的安装配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nodejs的环境配置"><span class="nav-number">1.1.</span> <span class="nav-text">nodejs的环境配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装git"><span class="nav-number">1.2.</span> <span class="nav-text">安装git</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装hexo"><span class="nav-number">1.3.</span> <span class="nav-text">安装hexo</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建配置博客项目"><span class="nav-number">2.</span> <span class="nav-text">创建配置博客项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建博客"><span class="nav-number">2.1.</span> <span class="nav-text">创建博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#博客项目的配置文件"><span class="nav-number">2.2.</span> <span class="nav-text">博客项目的配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo-常用命令-以及部署运行"><span class="nav-number">3.</span> <span class="nav-text">hexo 常用命令 以及部署运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用命令"><span class="nav-number">3.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地运行"><span class="nav-number">3.2.</span> <span class="nav-text">本地运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo主题"><span class="nav-number">4.</span> <span class="nav-text">hexo主题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#主题目录结构"><span class="nav-number">4.1.</span> <span class="nav-text">主题目录结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切换为主题为next"><span class="nav-number">4.2.</span> <span class="nav-text">切换为主题为next</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签页-amp-分类页-amp-阅读全文"><span class="nav-number">5.</span> <span class="nav-text">标签页 &amp; 分类页 &amp; 阅读全文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Front-matter"><span class="nav-number">5.1.</span> <span class="nav-text">Front-matter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo-new-的三种布局"><span class="nav-number">5.2.</span> <span class="nav-text">hexo new 的三种布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建标签页"><span class="nav-number">5.3.</span> <span class="nav-text">创建标签页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建分类页"><span class="nav-number">5.4.</span> <span class="nav-text">创建分类页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阅读全文"><span class="nav-number">5.5.</span> <span class="nav-text">阅读全文</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发布到GitHub-Pages"><span class="nav-number">6.</span> <span class="nav-text">发布到GitHub Pages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#踩坑"><span class="nav-number">7.</span> <span class="nav-text">踩坑</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

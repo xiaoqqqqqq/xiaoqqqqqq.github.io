@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="单列模式是软件开发过程中使用的一种方法，其套路为保证全局只有一个实例，一般用在配置或者缓存对象中。 实现方式通过装饰器在 Python 没有new运算符，而是通过调用类对象Myclss()来创建实例的，其中类对象Myclass后面跟了对圆括号()，这对圆括号可理解为call运算符，call运算符能对所以可调用对象(callable)进行运算。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 中的单例模式">
+<meta property="og:url" content="http://xiaoq1024.github.io/2018/09/29/singleton-in-python/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="单列模式是软件开发过程中使用的一种方法，其套路为保证全局只有一个实例，一般用在配置或者缓存对象中。 实现方式通过装饰器在 Python 没有new运算符，而是通过调用类对象Myclss()来创建实例的，其中类对象Myclass后面跟了对圆括号()，这对圆括号可理解为call运算符，call运算符能对所以可调用对象(callable)进行运算。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-30T03:01:03.655Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python 中的单例模式">
+<meta name="twitter:description" content="单列模式是软件开发过程中使用的一种方法，其套路为保证全局只有一个实例，一般用在配置或者缓存对象中。 实现方式通过装饰器在 Python 没有new运算符，而是通过调用类对象Myclss()来创建实例的，其中类对象Myclass后面跟了对圆括号()，这对圆括号可理解为call运算符，call运算符能对所以可调用对象(callable)进行运算。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2018/09/29/singleton-in-python/"/>
+
+
+
+
+
+  <title>Python 中的单例模式 | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2018/09/29/singleton-in-python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python 中的单例模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-29T16:53:15+08:00">
+                2018-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>单列模式是软件开发过程中使用的一种方法，其套路为保证全局只有一个实例，一般用在配置或者缓存对象中。</p>
+<h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h2><h3 id="通过装饰器"><a href="#通过装饰器" class="headerlink" title="通过装饰器"></a>通过装饰器</h3><p>在 Python 没有<code>new</code>运算符，而是通过调用类对象<code>Myclss()</code>来创建实例的，其中类对象<code>Myclass</code>后面跟了对圆括号<code>()</code>，这对圆括号可理解为<code>call运算符</code>，<code>call运算符</code>能对所以可调用对象(callable)进行运算。</p>
+<a id="more"></a>
+<p>实现代码如下，先定义装饰器，后将装饰器作用于需要使用单列模式的类上。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">singleton</span><span class="params">(cls)</span>:</span></span><br><span class="line">    _instance = <span class="keyword">None</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getinstance</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">nonlocal</span> _instance</span><br><span class="line">        <span class="keyword">if</span> _instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            _instance = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> _instance</span><br><span class="line">    <span class="keyword">return</span> getinstance</span><br><span class="line"></span><br><span class="line"><span class="meta">@singleton</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Myclass</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">instance1 = Myclass()</span><br><span class="line">instance2 = Myclass()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试输出</span></span><br><span class="line">In [<span class="number">33</span>]: id(instance1), id(instance2) </span><br><span class="line">(<span class="number">3112261316336</span>, <span class="number">3112261316336</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">34</span>]: type(Myclass)  <span class="comment"># 不再是类了</span></span><br><span class="line">Out[<span class="number">34</span>]: function</span><br><span class="line"></span><br><span class="line">In [<span class="number">35</span>]: type(instance1)  <span class="comment"># 只能通过实例去获取类型了</span></span><br><span class="line">Out[<span class="number">35</span>]: __main__.Myclass</span><br><span class="line"></span><br><span class="line">In [<span class="number">36</span>]: type(instance1) <span class="keyword">is</span> Myclass</span><br><span class="line">Out[<span class="number">36</span>]: <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">37</span>]: instance3 = type(instance1)()  <span class="comment"># 还是可以间接创建新的实例</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">38</span>]: type(instance3)</span><br><span class="line">Out[<span class="number">38</span>]: __main__.Myclass</span><br><span class="line"></span><br><span class="line">In [<span class="number">39</span>]: id(instance3)</span><br><span class="line">Out[<span class="number">39</span>]: <span class="number">3112262013616</span></span><br></pre></td></tr></table></figure>
+<p>优点：直接简单易懂，多继承环境下也可以工作。<br>缺点：因为<code>Myclass</code>是经过<code>@singleton</code>装饰了，所以此时<code>Myclass</code>是一个函数(getinstance)，不再是一个类对象了，不能执行类似于<code>type(instance) is Myclass</code>这样直接的类型判断。该方案本质是只是类对象进行隐藏了，用户还是可以通过<code>type(instance)()</code>这样的代码来创建新的实例的。</p>
+<h3 id="通过-new"><a href="#通过-new" class="headerlink" title="通过 __new__"></a>通过 <code>__new__</code></h3><p>Python 调用<code>Myclass()</code>创建实例的背后，首先是调用 <code>__new__</code> 创建出实例，然后再调用<code>__init__</code>初始化实例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">instance = Myclass(*args, **kwargs)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 背后过程</span></span><br><span class="line">instance = Myclass.__new__() <span class="comment"># No1</span></span><br><span class="line">instance.__init__(*args, **kwargs) <span class="comment"># No2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># __init__是初始化方法，而__new__才是构造方法</span></span><br><span class="line"><span class="comment"># 可以在__new__中加入限制使其只能创建一个实例</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span>:</span></span><br><span class="line">    _instance = <span class="keyword">None</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__new__</span><span class="params">(cls, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> cls._instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            print(<span class="string">'create new instance'</span>)</span><br><span class="line">            cls._instance = super().__new__(cls)</span><br><span class="line">        <span class="keyword">return</span> cls._instance</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Myclass</span><span class="params">(Singleton)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'Myclass.__init__'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">50</span>]: instance1 = Myclass()</span><br><span class="line">create new instance</span><br><span class="line">Myclass.__init__</span><br><span class="line"></span><br><span class="line">In [<span class="number">51</span>]: instance2 = Myclass()</span><br><span class="line">Myclass.__init__</span><br><span class="line"></span><br><span class="line">In [<span class="number">52</span>]: id(instance1), id(instance2)</span><br><span class="line">Out[<span class="number">52</span>]: (<span class="number">3112261396240</span>, <span class="number">3112261396240</span>)</span><br></pre></td></tr></table></figure>
+<p>优点：不像装饰器那般，<code>Myclass</code>保持了原有的类型。<br>缺点：尽管确保了<code>__new__</code>只执行一次创建对象的代码，但<code>__init__</code>初始化代码却在每一次都会运行。在多继承环境下如果其他类也定义了<code>__new__</code>也有可能会被覆盖。</p>
+<h3 id="通过元类"><a href="#通过元类" class="headerlink" title="通过元类"></a>通过元类</h3><p>在 Python 实例(instance)是由类对象(Myclass)来创建的，而类对象(Myclass)又是由元类(type)来创建的。 正如实例的行为(method)和属性(attribute)是由类对象(Myclass)来定义的一样，类对象(Myclass)的行为(method)和属性(attribute)同样可以通过元类来自定义。<br>既然创建实例是通过调用类对象来实现的，那么就可以在元类中定制类对象的调用方法<code>__call__</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SingletonMeta</span><span class="params">(type)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 以下两个方法的第一个参数为 self，pycharm 会提示改为 cls，毕竟此时是该对象为类对象</span></span><br><span class="line">    <span class="comment"># 仍然使用 self 的原因是：类对象在元类中是作为实例存在的，纯属个人理解</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        self._instance = <span class="keyword">None</span></span><br><span class="line">        super().__init__(*args, **kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span><span class="params">(self, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self._instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            print(<span class="string">'create new instance'</span>)</span><br><span class="line">            self._instance = super().__call__(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> self._instance</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Myclass</span><span class="params">(metaclass=SingletonMeta)</span>:</span>  <span class="comment"># 使用 metaclass 关键字参数指定创建 Myclass 类对象的元类</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">57</span>]: instance1 = Myclass()</span><br><span class="line">create new instance</span><br><span class="line"></span><br><span class="line">In [<span class="number">58</span>]: instance2 = Myclass()</span><br><span class="line"></span><br><span class="line">In [<span class="number">59</span>]: id(instance1), id(instance2)</span><br><span class="line">Out[<span class="number">59</span>]: (<span class="number">3112261364032</span>, <span class="number">3112261364032</span>)</span><br></pre></td></tr></table></figure>
+<p>优点：以我目前的知识看来，全场最佳。</p>
+<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><p>Python 中由于 GIL 的存在，多线程环境下并没有真正意义上的并行，但仍然需要考虑并发问题，正如 Java 的常见套路那般，double check 是常用的方法。</p>
+<h3 id="多线程下的测试"><a href="#多线程下的测试" class="headerlink" title="多线程下的测试"></a>多线程下的测试</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> ThreadPoolExecutor, as_completed</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">singleton</span><span class="params">(cls)</span>:</span></span><br><span class="line">    _instance = <span class="keyword">None</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getinstance</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">nonlocal</span> _instance</span><br><span class="line">        <span class="keyword">if</span> _instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            time.sleep(random.random())</span><br><span class="line">            _instance = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> _instance</span><br><span class="line">    <span class="keyword">return</span> getinstance</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Myclass</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></span><br><span class="line">    pool = ThreadPoolExecutor(<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">        getinstance = singleton(Myclass)</span><br><span class="line">        futures = (pool.submit(getinstance) <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">5</span>))</span><br><span class="line">        instance_ids = [id(future.result()) <span class="keyword">for</span> future <span class="keyword">in</span> as_completed(futures)]</span><br><span class="line">        print(instance_ids)</span><br><span class="line"></span><br><span class="line">In [<span class="number">88</span>]: test()  <span class="comment"># 在多线程环境下创建了多份</span></span><br><span class="line">[<span class="number">3112261499144</span>, <span class="number">3112261434896</span>, <span class="number">3112261499536</span>, <span class="number">3112261712360</span>, <span class="number">3112261433048</span>]</span><br><span class="line">[<span class="number">3112261497856</span>, <span class="number">3112260831048</span>, <span class="number">3112260829480</span>, <span class="number">3112260831664</span>, <span class="number">3112261433048</span>]</span><br><span class="line">[<span class="number">3112261498584</span>, <span class="number">3112261712304</span>, <span class="number">3112261711408</span>, <span class="number">3112261499536</span>, <span class="number">3112261709952</span>]</span><br><span class="line">[<span class="number">3112261315944</span>, <span class="number">3112260831048</span>, <span class="number">3112261435344</span>, <span class="number">3112261499144</span>, <span class="number">3112260829480</span>]</span><br><span class="line">[<span class="number">3112261713032</span>, <span class="number">3112261498584</span>, <span class="number">3112261433944</span>, <span class="number">3112261712584</span>, <span class="number">3112261711408</span>]</span><br><span class="line">[<span class="number">3112261313928</span>, <span class="number">3112261313144</span>, <span class="number">3112260831048</span>, <span class="number">3112260832896</span>, <span class="number">3112261433048</span>]</span><br><span class="line">[<span class="number">3112261499144</span>, <span class="number">3112261433944</span>, <span class="number">3112261499536</span>, <span class="number">3112261711408</span>, <span class="number">3112261712584</span>]</span><br><span class="line">[<span class="number">3112261433944</span>, <span class="number">3112260832896</span>, <span class="number">3112261433048</span>, <span class="number">3112260829480</span>, <span class="number">3112260830040</span>]</span><br><span class="line">[<span class="number">3112261711688</span>, <span class="number">3112261711408</span>, <span class="number">3112261499144</span>, <span class="number">3112261712304</span>, <span class="number">3112261712360</span>]</span><br><span class="line">[<span class="number">3112261433608</span>, <span class="number">3112260831048</span>, <span class="number">3112260830040</span>, <span class="number">3112261313928</span>, <span class="number">3112260832896</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="装饰器-thread-safe-版"><a href="#装饰器-thread-safe-版" class="headerlink" title="装饰器 thread-safe 版"></a>装饰器 thread-safe 版</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">_singleton_lock = threading.Lock()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">singleton</span><span class="params">(cls)</span>:</span></span><br><span class="line">    _instance = <span class="keyword">None</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getinstance</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">nonlocal</span> _instance</span><br><span class="line">        <span class="keyword">if</span> _instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="keyword">with</span> _singleton_lock:</span><br><span class="line">                <span class="keyword">if</span> _instance <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">                    _instance = cls(*args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> _instance</span><br><span class="line">    <span class="keyword">return</span> getinstance</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Myclass</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python" target="_blank" rel="noopener">Creating a singleton in Python</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/30/https-ca/" rel="next" title="https证书">
+                <i class="fa fa-chevron-left"></i> https证书
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/13/jd-login/" rel="prev" title="滑块验证码之京东登录">
+                滑块验证码之京东登录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实现方式"><span class="nav-number">1.</span> <span class="nav-text">实现方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通过装饰器"><span class="nav-number">1.1.</span> <span class="nav-text">通过装饰器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过-new"><span class="nav-number">1.2.</span> <span class="nav-text">通过 __new__</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过元类"><span class="nav-number">1.3.</span> <span class="nav-text">通过元类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存在的问题"><span class="nav-number">2.</span> <span class="nav-text">存在的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程下的测试"><span class="nav-number">2.1.</span> <span class="nav-text">多线程下的测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰器-thread-safe-版"><span class="nav-number">2.2.</span> <span class="nav-text">装饰器 thread-safe 版</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
