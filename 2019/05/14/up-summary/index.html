@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="UP 上线审批系统旨在替代原来的 jira，为公司上线提供规范化流程和为后续审计提供数据支持。作为首次全栈项目，花了不少的心思，同时也踩了不少的坑，本文就做个简单的总结。 项目主要技术栈 前端  前端框架: react 状态管理: react-redux、redux-thunk、immutable UI 框架: antd http 请求: axios   后端  web框架: flask 数据库和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UP 上线审批系统总结">
+<meta property="og:url" content="http://xiaoq1024.github.io/2019/05/14/up-summary/index.html">
+<meta property="og:site_name" content="xiaoq.py">
+<meta property="og:description" content="UP 上线审批系统旨在替代原来的 jira，为公司上线提供规范化流程和为后续审计提供数据支持。作为首次全栈项目，花了不少的心思，同时也踩了不少的坑，本文就做个简单的总结。 项目主要技术栈 前端  前端框架: react 状态管理: react-redux、redux-thunk、immutable UI 框架: antd http 请求: axios   后端  web框架: flask 数据库和">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-06T09:16:52.503Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UP 上线审批系统总结">
+<meta name="twitter:description" content="UP 上线审批系统旨在替代原来的 jira，为公司上线提供规范化流程和为后续审计提供数据支持。作为首次全栈项目，花了不少的心思，同时也踩了不少的坑，本文就做个简单的总结。 项目主要技术栈 前端  前端框架: react 状态管理: react-redux、redux-thunk、immutable UI 框架: antd http 请求: axios   后端  web框架: flask 数据库和">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xiaoq1024.github.io/2019/05/14/up-summary/"/>
+
+
+
+
+
+  <title>UP 上线审批系统总结 | xiaoq.py</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">xiaoq.py</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep learning</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://xiaoq1024.github.io/2019/05/14/up-summary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaoq">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ali.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xiaoq.py">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">UP 上线审批系统总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-14T20:50:56+08:00">
+                2019-05-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>UP 上线审批系统旨在替代原来的 jira，为公司上线提供规范化流程和为后续审计提供数据支持。作为首次全栈项目，花了不少的心思，同时也踩了不少的坑，本文就做个简单的总结。</p>
+<h2 id="项目主要技术栈"><a href="#项目主要技术栈" class="headerlink" title="项目主要技术栈"></a>项目主要技术栈</h2><ul>
+<li><p>前端</p>
+<ul>
+<li>前端框架: react</li>
+<li>状态管理: react-redux、redux-thunk、immutable</li>
+<li>UI 框架: antd</li>
+<li>http 请求: axios</li>
+</ul>
+</li>
+<li><p>后端</p>
+<ul>
+<li>web框架: flask</li>
+<li>数据库和 orm: mysql sqlalchemy</li>
+<li>异步任务: celery redis</li>
+<li>部署: uwsgi nginx supervisor</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="前端采坑"><a href="#前端采坑" class="headerlink" title="前端采坑"></a>前端采坑</h2><ul>
+<li><p>使用<code>create-react-app</code>创建的项目，使用<code>yarn eject</code>命令将<code>webpack</code>配置暴露出来，以自定义<code>antd</code>主题等样式。</p>
+</li>
+<li><p>安装<code>less-loader</code>，编辑<code>config/webpack.conf.js</code>自定义<code>antd</code>的样式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    test: lessRegex,</span><br><span class="line">    use: getStyleLoaders(</span><br><span class="line">    &#123;</span><br><span class="line">        importLoaders: 2,</span><br><span class="line">        sourceMap: isEnvProduction</span><br><span class="line">        ? shouldUseSourceMap</span><br><span class="line">        : isEnvDevelopment,</span><br><span class="line">    &#125;,</span><br><span class="line">    &apos;less-loader&apos;,</span><br><span class="line">    // custom antd</span><br><span class="line">    &#123;</span><br><span class="line">        modifyVars: &#123;</span><br><span class="line">        &apos;primary-color&apos;: &apos;#00A690&apos;, // 主题色</span><br><span class="line">        &apos;link-color&apos;: &apos;#00A690&apos;,</span><br><span class="line">        &apos;text-color&apos;: &apos;#152321&apos;,</span><br><span class="line">        &apos;text-color-secondary&apos;: &apos;#777E7D&apos;,</span><br><span class="line">        &apos;card-head-padding&apos;: &apos;13px&apos;,</span><br><span class="line">        &#125;,</span><br><span class="line">        javascriptEnabled: true,</span><br><span class="line">    &#125;</span><br><span class="line">    ),</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑<code>config/webpack.conf.js</code>按需加载<code>antd</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 可使用 yarn add less@^2.7.3 安装依赖库的指定版本</span><br><span class="line">plugins: [</span><br><span class="line">[&apos;import&apos;, [&#123;</span><br><span class="line">    libraryName: &apos;antd&apos;,</span><br><span class="line">    style: true,  // 编译源代码 可以更改主题</span><br><span class="line">&#125;]]</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>withRouter</code>装饰器为组件提供<code>location</code>属性<br>当某个组件没有直接挂在<code>react-router-dom.Route</code>下面时，<code>props</code>是没有<code>location</code>属性的，不能使用路由功能。<br>此时需经过装饰器<code>withRouter</code>装饰后才具备路由功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">const UPBreadcrumb = withRouter((props)=&gt;&#123;</span><br><span class="line">    const path = props.location.pathname;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 reducer 拆分后如何获取全局的 state</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 通过中间件 redux-thunk 提供的 getState</span><br><span class="line">export const getComment = (dispatch, getState) =&gt; &#123;</span><br><span class="line">    const state = getState(); // 获取全局的 state</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="后端采坑"><a href="#后端采坑" class="headerlink" title="后端采坑"></a>后端采坑</h2><ul>
+<li><p>flask 在开发模式下会其两个进程，此时有可能引起循环导入。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 加了一句 print(&apos;blueprint&apos;, id(blueprint))</span><br><span class="line"># 可以看到创建了两个不同的 blueprint 此时稍不注意就会导致注册路由无效</span><br><span class="line">blueprint 2940967577920</span><br><span class="line"> * Serving Flask app &quot;app.app&quot; (lazy loading)</span><br><span class="line"> * Environment: production</span><br><span class="line">   WARNING: Do not use the development server in a production environment.</span><br><span class="line">   Use a production WSGI server instead.</span><br><span class="line"> * Debug mode: on</span><br><span class="line"> * Restarting with stat</span><br><span class="line">blueprint 1867627157936</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>view 函数中可返回string、tuple，那么框架是如何处理的，有什么要求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 查看flask源码，最终会调用 maker_response(rv)</span><br><span class="line">如果是tuple:</span><br><span class="line">    len(rv) == 3:</span><br><span class="line">        rv, status, headers = rv</span><br><span class="line">    len(rv) == 2</span><br><span class="line">        if isinstance(rv[1], (Headers, dict, tuple, list)):</span><br><span class="line">            rv, headers = rv</span><br><span class="line">        else:</span><br><span class="line">            rv, status = rv</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 supervisor 的配置文件后，使用<code>update</code>仅更新修改的，而不是<code>reload</code>重新加载所有</p>
+</li>
+<li><p>nginx 路由匹配少写了<code>/</code>导致301</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name xx.yyy.com;</span><br><span class="line">    access_log  logs/access_up.log main;</span><br><span class="line">    error_log logs/error_up.log ;</span><br><span class="line"></span><br><span class="line">    location ^~ /api/ &#123;</span><br><span class="line">        proxy_pass http://1.1.1.1:9040;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location ^~ /upload/ &#123;</span><br><span class="line">        alias /opt/static/upload/;   # 静态资源，错误的写成了 /opt/static/upload;</span><br><span class="line">        try_files $uri $uri/ /index.html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        alias /opt/static/up/spa/build/;</span><br><span class="line">        index index.html;</span><br><span class="line">        try_files $uri $uri/ /index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当 property 遇上了 hasattr</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># hasattr(obj, key) 的伪代码类似于</span><br><span class="line">try:</span><br><span class="line">    obj.key</span><br><span class="line">    return True</span><br><span class="line">except:</span><br><span class="line">    return False</span><br><span class="line"></span><br><span class="line">所以当`obj.key`的`key` 为 property，且该 property 抛出了异常，则 hasattr(obj, key) 将会返回 False，则有可能会因此隐藏掉该 property 和里面的异常。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>werkzeug.secure_filename</code> 不支持中文名文件<br>主要的代码为<code>filename = normalize(&quot;NFKD&quot;, filename).encode(&quot;ascii&quot;, &quot;ignore&quot;)</code><br>查看<code>werkzeug.secure_filename</code>的源码，重新实现了一个unicode版本的。</p>
+</li>
+</ul>
+<ul>
+<li>celery 占用 CPU 100%<br>原因是 celery 的 worker 工作一段时间异常后未能成功退出和重启<br>加入<code>--max-tasks-per-child 20</code>，每个 worker 执行 20 个任务后就退出重启。<br>加入<code>--time-limit 60</code>，每个 worker 任务超时时间为 60s。   </li>
+</ul>
+<ul>
+<li>配合 uwsgi 在多 worker 模式下抛出数据库连接异常问题<br>单 worker 下测试正常，多 worker 会抛出 <code>pymysql.err.OperationalError: (2013, &#39;Lost connection to MySQL server during query&#39;)</code><br>原因是多 worker 下， uwsgi 会先启动一个 master 然后 fork 出其他的 worker，这些 worker 共享了同一个数据库连接，解决的办法是 uwsgi 添加<code>--lazy-apps</code>选项</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/13/jd-login/" rel="next" title="滑块验证码之京东登录">
+                <i class="fa fa-chevron-left"></i> 滑块验证码之京东登录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/ali.png"
+                alt="xiaoq" />
+            
+              <p class="site-author-name" itemprop="name">xiaoq</p>
+              <p class="site-description motion-element" itemprop="description">人生苦短，我用Python！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目主要技术栈"><span class="nav-number">1.</span> <span class="nav-text">项目主要技术栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前端采坑"><span class="nav-number">2.</span> <span class="nav-text">前端采坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后端采坑"><span class="nav-number">3.</span> <span class="nav-text">后端采坑</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaoq</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
